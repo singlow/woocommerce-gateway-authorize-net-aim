@@ -1,0 +1,11 @@
+{
+  "name": "woothemes/woocommerce-gateway-authorize-net-aim",
+  "description": "WooCommerce plugin for Authorize.NET AIM payment integration.",
+  "keywords": ["wordpress"],
+  "type": "wordpress-plugin",
+  "homepage": "https://woothemes.com",
+  "license": "GPL-3.0",
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}

@@ -1,0 +1,130 @@
+*** WooCommerce Authorize.net AIM Gateway Changelog ***
+
+2015.04.29 - version 3.3.3
+ * Fix - Ensure SIM gateway can be activated
+
+2015.04.21 - version 3.3.2
+ * Fix - Escape all instances of add_query_arg and remove_query_arg to avoid a potential XSS attack
+ * Tweak - Introduce the `wc_authorize_net_aim_transaction_description` filter
+
+2015.02.19 - version 3.3.1
+ * Fix - Fix a fatal error on checkout for stores using PHP 5.2
+
+2015.02.09 - version 3.3.0
+ * Feature - Refund/Void support! You can now refund/void transactions directly from the Edit Order screen :)
+ * Misc - WooCommerce 2.3 Compatibility
+
+2014.10.28 - version 3.2.5
+ * Fix - Fix Uncaught exception 'SV_WC_API_Exception' error.
+
+2014.10.21 - version 3.2.4
+ * Fix - Avoid failed transactions when order includes negative fees or items
+ * Fix - Apply 'wc_authorize_net_aim_api_request_data' filter to the request data
+ * Fix - Fix "Wrong parameters for Exception" error
+ * Misc - Update plugin framework
+
+2014.09.18 - version 3.2.3
+ * Fix - Fix an issue with sending the billing email address with the payment request
+
+2014.09.15 - version 3.2.2
+ * Fix - Fix duplicated log entries
+
+2014.09.10 - version 3.2.1
+ * Tweak - Improved transaction handling when your Authorize.net account is configured incorrectly
+
+2014.09.07 - version 3.2.0
+ * Feature - You can now display detailed decline messages to customers
+ * Tweak - Order currency is now included in transactions
+ * Misc - WooCommerce 2.2 Compatibility
+
+2014.08.27 - version 3.1.4
+ * Misc - Update Plugin Framework
+
+2014.08.20 - version 3.1.3
+ * Fix - Fixed an issue with some images not displaying properly
+
+2014.08.19 - version 3.1.2
+ * Fix - Fix duplicate line item description
+ * Fix - Fix line item encoding issue
+
+2014.07.04 - version 3.1.1
+ * Fix - Fix line item encoding issue
+ * Misc - Updated 'Write a Review' plugin action link
+
+2014.05.27 - version 3.1
+ * Feature - You can now capture charges for multiple orders using the 'Capture Charge' bulk order action
+ * Tweak - Authorized charges are no longer automatically captured when changing the order status from on-hold to processing/completed
+ * Fix - Fix possible conflict with adding tax rates
+ * Fix - Fix possible conflicts with very long order descriptions
+
+2014.04.25 - version 3.0.2
+ * Fix - Limit the number of order line items sent to Authorize.net to 30
+ * Fix - Fix typo preventing proper validation of card numbers with dashes or spaces, thanks Dan
+
+2014.03.24 - version 3.0.1
+ * Fix - Fix potential fatal error with restrictive PHP environments
+ * Fix - Add missing checkout javascript file
+
+2014.03.10 - version 3.0
+ * Feature - eCheck support!
+ * Feature - Capture prior authorized transactions right from the WooCommerce edit order screen!
+ * Feature - Payment fields are now templates for easier customization
+ * Tweak - Enhanced error handling and CVV/AVS checking
+ * Tweak - Completely rewritten for improved performance and stability
+ * Fix - The gateway description now displays properly at checkout
+ * Misc - Uses SkyVerge Payment Gateway Framework
+ * Localization - Text domain changed from `wc-authorize-net` to `woocommerce-gateway-authorize-net-aim`
+
+2014.01.20 - version 2.1
+ * Tweak - Added option to require all billing fields at checkout if your payment processor requires it
+ * Fix - Orders for declined transactions are marked as "failed"
+ * Misc - WooCommerce 2.1 Compatibility
+
+2013.07.26 - version 2.0.8
+ * Localization - Text domain set to wc-authorize-net
+ * Localization - Japanese translation by Kazuya Kataoka
+
+2013.07.09 - version 2.0.7
+ * Rebrand to SkyVerge, Inc.
+
+2013.06.08 - version 2.0.6
+ * Remove ARB class until tested.
+
+2013.05.20 - version 2.0.5
+ * Fix - Changed WP_PLUGIN_URL to plugins_url()
+ * Fix - Force tax to 2 decimal positions
+
+2013.02.12 - version 2.0.4
+ * Added compatibility for Sequential Order Numbers Pro
+
+2013.01.28 - version 2.0.3
+ * Fix for error "Tax amount is invalid"
+
+2013.01.22 - version 2.0.2
+ * Fix to send shipping information to Authorize.net if it is available
+ * Verified compatibility with WooCommerce 2.0
+
+2012.12.05 - version 2.0.1
+ * Updater
+
+2012.10.15 - version 2.0
+ * Subscriptions support postponed
+
+2012.06.22 - version 1.4
+ * Added approval for Response code = "4" meaning the transaction was approved, but put into manual review.
+
+2012.02.5 - version 1.3
+ * WC 1.4 Compatibility
+ * wp_remote_post instead of curl
+ * Added woo updater
+
+2011.12.21 - version 1.2
+ * Added billing email to the Authorize.net order record in case the site owner's Authorize.net account has that field set to Required by default.
+
+2011.11.16 - version 1.1
+ * Removed unused options
+ * Switched logging to be email based for added security. Old logs should be deleted - delete the 'logs' directory in the plugin folder if it exists.
+ * Logging requires test mode on
+
+2011.09.27 - version 1.0
+ * First Release
