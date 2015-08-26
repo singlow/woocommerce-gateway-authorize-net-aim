@@ -126,4 +126,22 @@ class WC_Gateway_Authorize_Net_AIM_Credit_Card extends WC_Gateway_Authorize_Net_
 	}
 
 
+	/**
+	 * Authorize.net allows for an authorized & captured transaction that has not
+	 * yet settled to be voided. This overrides the refund method when a refund
+	 * request encounters the "Code 54 - The referenced transaction does not meet
+	 * the criteria for issuing a credit." error and attempts a void instead.
+	 *
+	 * @since 3.4.0
+	 * @see SV_WC_Payment_Gateway::maybe_void_instead_of_refund()
+	 * @param \WC_Order $order order
+	 * @param \WC_Authorize_Net_AIM_API_Response $response refund response
+	 * @return boolean true if a void should be performed instead of a refund
+	 */
+	protected function maybe_void_instead_of_refund( $order, $response ) {
+
+		return ! $response->transaction_approved() && '3' == $response->get_transaction_response_code() && '54' == $response->get_transaction_response_reason_code();
+	}
+
+
 }

@@ -115,7 +115,7 @@ if ( ! function_exists( 'woocommerce_authorize_net_aim_echeck_payment_fields' ) 
 			'checkout/authorize-net-aim-echeck-payment-fields.php',
 			array(
 				'payment_method_defaults' => $payment_method_defaults,
-				'sample_check_image_url'  => WC_HTTPS::force_https_url( $gateway->get_plugin()->get_plugin_url() ) . '/' . $gateway->get_plugin()->get_framework_image_path() . 'example-check.png',
+				'sample_check_image_url'  => WC_HTTPS::force_https_url( $gateway->get_plugin()->get_payment_gateway_framework_assets_url() . '/images/sample-check.png' ),
 				'states'                  => WC()->countries->get_states( 'US' ),
 			),
 			'',
@@ -123,6 +123,3 @@ if ( ! function_exists( 'woocommerce_authorize_net_aim_echeck_payment_fields' ) 
 		);
 	}
 }
-
-
-

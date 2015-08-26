@@ -36,7 +36,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/** the production endpoint */
-	const PRODUCTION_ENDPOINT = 'https://api.authorize.net/xml/v1/request.api';
+	const PRODUCTION_ENDPOINT = 'https://api2.authorize.net/xml/v1/request.api';
 
 	/** the test endpoint */
 	const TEST_ENDPOINT = 'https://apitest.authorize.net/xml/v1/request.api';
@@ -340,9 +340,12 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 */
 	protected function do_post_parse_response_validation() {
 
-		if ( $this->get_response()->has_api_error() ) {
+		// E00027 is a processing error that almost always includes additional transaction info, like status codes and a transaction ID so it's treated like a general transaction decline than API error
+		if ( $this->get_response()->has_api_error() && 'E00027' !== $this->get_response()->get_api_error_code() ) {
 
-			throw new SV_WC_API_Exception( sprintf( __( 'Code: %s, Message: %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $this->get_response()->get_api_error_code(), $this->get_response()->get_api_error_message() ) );
+			$exception_code = intval( str_ireplace( array( 'E', 'I' ), '', $this->get_response()->get_api_error_code() ) );
+
+			throw new SV_WC_API_Exception( sprintf( __( 'Code: %s, Message: %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $this->get_response()->get_api_error_code(), $this->get_response()->get_api_error_message() ), $exception_code );
 
 		} elseif ( $this->get_response()->is_test_request() ) {
 
@@ -358,10 +361,10 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * Builds and returns a new API request object
 	 *
 	 * @since 3.0
-	 * @param string $type
+	 * @param array $type
 	 * @return \WC_Authorize_Net_AIM_API_Request API request object
 	 */
-	protected function get_new_request( $type = null ) {
+	protected function get_new_request( $type = array() ) {
 
 		return new WC_Authorize_Net_AIM_API_Request( $this->api_login_id, $this->api_transaction_key );
 	}

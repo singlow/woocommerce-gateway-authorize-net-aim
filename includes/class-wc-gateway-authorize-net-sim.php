@@ -308,7 +308,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			}
 			$post = substr( $post, 0, -1 );
 
-			$response = wp_remote_post( $this->gatewayurl, array(
+			$response = wp_safe_remote_post( $this->gatewayurl, array(
 				'method'       => 'POST',
 				'body'         => $post,
 				'redirection'  => 0,
@@ -471,7 +471,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		$order_note = sprintf( __( 'Authorize.net AIM Payment Failed (%s)', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $error_message );
 
 		// Mark order as failed if not already set, otherwise, make sure we add the order note so we can detect when someone fails to check out multiple times
-		if ( ! SV_WC_Plugin_Compatibility::order_has_status( $order, 'failed' ) ) {
+		if ( ! $order->has_status( 'failed' ) ) {
 			$order->update_status( 'failed', $order_note );
 		} else {
 			$order->add_order_note( $order_note );

@@ -1,5 +1,20 @@
 *** WooCommerce Authorize.net AIM Gateway Changelog ***
 
+2015.08.05 - version 3.4.2
+ * Fix - Correctly load the sample check image
+
+2015.08.04 - version 3.4.1
+ * Fix - Fix issue with handling certain transaction errors
+ * Tweak - Adjust payment gateway icon styling to play better with certain themes
+
+2015.07.28 - version 3.4.0
+ * Tweak - Refunds for orders that have been captured but not yet settled will be automatically attempt a void instead
+ * Tweak - When voiding an order the order status now changes to cancelled instead of refunded
+ * Tweak - Uses new Akamai API endpoints in production
+ * Fix - Fix issues with UTF-8 characters being stripped incorrectly
+ * Misc - WooCommerce 2.4 Compatibility
+ * Misc - Update SkyVerge plugin framework
+
 2015.04.29 - version 3.3.3
  * Fix - Ensure SIM gateway can be activated
 

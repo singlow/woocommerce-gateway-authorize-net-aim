@@ -123,7 +123,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 		// set card type
 		if ( $this->is_credit_card_gateway() ) {
 
-			$order->payment->card_type = SV_WC_Payment_Gateway_Payment_Token::type_from_account_number( $order->payment->account_number );
+			$order->payment->card_type = SV_WC_Payment_Gateway_Helper::card_type_from_account_number( $order->payment->account_number );
 		}
 
 		/**

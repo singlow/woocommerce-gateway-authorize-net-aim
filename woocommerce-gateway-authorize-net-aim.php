@@ -3,13 +3,13 @@
  * Plugin Name: WooCommerce Authorize.net AIM Gateway
  * Plugin URI: http://www.woothemes.com/products/authorize-net-aim/
  * Description: Accept Credit Cards and eChecks via Authorize.net AIM in your WooCommerce store
- * Author: SkyVerge
- * Author URI: http://www.skyverge.com
- * Version: 3.3.3
+ * Author: WooThemes / SkyVerge
+ * Author URI: http://www.woothemes.com
+ * Version: 3.4.2
  * Text Domain: woocommerce-gateway-authorize-net-aim
  * Domain Path: /i18n/languages/
  *
- * Copyright: (c) 2011-2014 SkyVerge, Inc. (info@skyverge.com)
+ * Copyright: (c) 2011-2015 SkyVerge, Inc. (info@skyverge.com)
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // Required functions
 if ( ! function_exists( 'woothemes_queue_update' ) ) {
-	require_once( 'woo-includes/woo-functions.php' );
+	require_once( plugin_dir_path( __FILE__ ) . 'woo-includes/woo-functions.php' );
 }
 
 // Plugin updates
@@ -38,10 +38,10 @@ if ( ! is_woocommerce_active() ) {
 
 // Required library class
 if ( ! class_exists( 'SV_WC_Framework_Bootstrap' ) ) {
-	require_once( 'lib/skyverge/woocommerce/class-sv-wc-framework-bootstrap.php' );
+	require_once( plugin_dir_path( __FILE__ ) . 'lib/skyverge/woocommerce/class-sv-wc-framework-bootstrap.php' );
 }
 
-SV_WC_Framework_Bootstrap::instance()->register_plugin( '3.1.0', __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array( 'is_payment_gateway' => true, 'minimum_wc_version' => '2.1', 'backwards_compatible' => '3.1.0' ) );
+SV_WC_Framework_Bootstrap::instance()->register_plugin( '4.0.1', __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array( 'is_payment_gateway' => true, 'minimum_wc_version' => '2.2', 'backwards_compatible' => '4.0.0' ) );
 
 function init_woocommerce_gateway_authorize_net_aim() {
 
@@ -108,7 +108,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/** string version number */
-	const VERSION = '3.3.3';
+	const VERSION = '3.4.2';
 
 	/** @var WC_Authorize_Net_AIM single instance of this plugin */
 	protected static $instance;
@@ -189,10 +189,12 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 */
 	public function includes() {
 
+		$plugin_path = $this->get_plugin_path();
+
 		// gateway classes
-		require_once( 'includes/class-wc-gateway-authorize-net-aim.php' );
-		require_once( 'includes/class-wc-gateway-authorize-net-aim-credit-card.php' );
-		require_once( 'includes/class-wc-gateway-authorize-net-aim-echeck.php' );
+		require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-aim.php' );
+		require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-aim-credit-card.php' );
+		require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-aim-echeck.php' );
 
 		// require checkout billing fields for non-US stores, as all European card processors require the billing fields
 		// in order to successfully process transactions
@@ -208,7 +210,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 		// load the legacy SIM gateway if active
 		if ( $this->is_legacy_sim_gateway_active() ) {
 
-			require_once( 'includes/class-wc-gateway-authorize-net-sim.php' );
+			require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-sim.php' );
 			add_filter( 'woocommerce_payment_gateways', array( $this, 'load_legacy_sim_gateway' ) );
 		}
 	}
@@ -240,7 +242,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 */
 	public function include_template_functions() {
 
-		require_once( 'includes/wc-gateway-authorize-net-aim-template-functions.php' );
+		require_once( $this->get_plugin_path() . '/includes/wc-gateway-authorize-net-aim-template-functions.php' );
 	}
 
 
@@ -344,6 +346,24 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/**
+	 * Returns the "Configure Credit Cards" or "Configure eCheck" plugin action links that go
+	 * directly to the gateway settings page
+	 *
+	 * @since 3.4.0
+	 * @see SV_WC_Payment_Gateway_Plugin::get_settings_url()
+	 * @param string $gateway_id the gateway identifier
+	 * @return string plugin configure link
+	 */
+	public function get_settings_link( $gateway_id = null ) {
+
+		return sprintf( '<a href="%s">%s</a>',
+			$this->get_settings_url( $gateway_id ),
+			self::CREDIT_CARD_GATEWAY_ID === $gateway_id ? __( 'Configure Credit Cards', self::TEXT_DOMAIN ) : __( 'Configure eChecks', self::TEXT_DOMAIN )
+		);
+	}
+
+
+	/**
 	 * Handles activating/deactivating the legacy SIM gateway
 	 *
 	 * @since 3.0
@@ -397,7 +417,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 			} else {
 				$message = __( "Legacy Authorize.net SIM gateway is now inactive.", self::TEXT_DOMAIN );
 			}
-			$this->get_admin_notice_handler()->add_admin_notice( $message, 'authorize-net-sim-status', array( 'dismissible' => false ) );
+			$this->get_admin_notice_handler()->add_admin_notice( $message, 'authorize-net-sim-status', array( 'dismissible' => false, 'notice_class' => 'updated' ) );
 		}
 	}
 
@@ -433,18 +453,6 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/**
-	 * Gets the plugin documentation url
-	 *
-	 * @since 3.0
-	 * @see SV_WC_Plugin::get_documentation_url()
-	 * @return string documentation URL
-	 */
-	public function get_documentation_url() {
-		return 'http://docs.woothemes.com/document/authorize-net-aim/';
-	}
-
-
-	/**
 	 * Returns the plugin name, localized
 	 *
 	 * @since 3.0
@@ -453,6 +461,30 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 */
 	public function get_plugin_name() {
 		return __( 'WooCommerce Authorize.net AIM Gateway', self::TEXT_DOMAIN );
+	}
+
+
+	/**
+	 * Gets the plugin documentation URL
+	 *
+	 * @since 3.0
+	 * @see SV_WC_Plugin::get_documentation_url()
+	 * @return string
+	 */
+	public function get_documentation_url() {
+		return 'http://docs.woothemes.com/document/authorize-net-aim/';
+	}
+
+
+	/**
+	 * Gets the plugin support URL
+	 *
+	 * @since 3.4.0
+	 * @see SV_WC_Plugin::get_support_url()
+	 * @return string
+	 */
+	public function get_support_url() {
+		return 'https://support.woothemes.com/';
 	}
 
 

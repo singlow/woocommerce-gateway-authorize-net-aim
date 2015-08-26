@@ -316,6 +316,29 @@ class WC_Authorize_Net_AIM_API_Response implements SV_WC_Payment_Gateway_API_Res
 
 
 	/**
+	 * Returns the response reason code
+	 *
+	 * @since 3.4.0
+	 * @return string response reason code
+	 */
+	public function get_transaction_response_reason_code() {
+
+		return isset( $this->response_xml->transactionResponse->errors->error->errorCode ) ? (string) $this->response_xml->transactionResponse->errors->error->errorCode : null;
+	}
+
+
+	/**
+	 * Returns the response reason code
+	 *
+	 * @since 3.4.0
+	 * @return string response reason code
+	 */
+	public function get_transaction_response_reason_text() {
+		return isset( $this->response_xml->transactionResponse->errors->error->errorText ) ? $this->response_xml->transactionResponse->errors->error->errorText : null;
+	}
+
+
+	/**
 	 * The authorization code is returned from the credit card processor to
 	 * indicate that the charge will be paid by the card issuer
 	 *

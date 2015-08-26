@@ -394,7 +394,7 @@ class WC_Authorize_Net_AIM_API_Request implements SV_WC_Payment_Gateway_API_Requ
 	private function get_customer() {
 
 		$customer = array(
-			'id' => SV_WC_Plugin_Compatibility::get_order_user_id( $this->order ),
+			'id' => $this->order->get_user_id(),
 		);
 
 		if ( is_email( $this->order->billing_email ) ) {
@@ -420,7 +420,7 @@ class WC_Authorize_Net_AIM_API_Request implements SV_WC_Payment_Gateway_API_Requ
 				'firstName'   => array( 'value' => $this->order->billing_first_name,                                        'limit' => 50 ),
 				'lastName'    => array( 'value' => $this->order->billing_last_name,                                         'limit' => 50 ),
 				'company'     => array( 'value' => $this->order->billing_company,                                           'limit' => 50 ),
-				'address'     => array( 'value' => $this->order->billing_address_1 . ' ' . $this->order->billing_address_2, 'limit' => 60 ),
+				'address'     => array( 'value' => $this->order->billing_address_1 . ( ! empty( $this->order->billing_address_2 ) ? $this->order->billing_address_2 : '' ), 'limit' => 60 ),
 				'city'        => array( 'value' => $this->order->billing_city,                                              'limit' => 40 ),
 				'state'       => array( 'value' => $this->order->billing_state,                                             'limit' => 40 ),
 				'zip'         => array( 'value' => $this->order->billing_postcode,                                          'limit' => 20 ),
@@ -431,7 +431,7 @@ class WC_Authorize_Net_AIM_API_Request implements SV_WC_Payment_Gateway_API_Requ
 				'firstName' => array( 'value' => $this->order->shipping_first_name,                                         'limit' => 50 ),
 				'lastName'  => array( 'value' => $this->order->shipping_last_name,                                          'limit' => 50 ),
 				'company'   => array( 'value' => $this->order->shipping_company,                                            'limit' => 50 ),
-				'address'   => array( 'value' => $this->order->shipping_address_1 . ' ' . $this->order->shipping_address_2, 'limit' => 60 ),
+				'address'   => array( 'value' => $this->order->shipping_address_1 . ( ! empty( $this->order->shipping_address_2 ) ? $this->order->shipping_address_2 : '' ), 'limit' => 60 ),
 				'city'      => array( 'value' => $this->order->shipping_city,                                               'limit' => 40 ),
 				'state'     => array( 'value' => $this->order->shipping_state,                                              'limit' => 40 ),
 				'zip'       => array( 'value' => $this->order->shipping_postcode,                                           'limit' => 20 ),
@@ -443,7 +443,15 @@ class WC_Authorize_Net_AIM_API_Request implements SV_WC_Payment_Gateway_API_Requ
 
 		foreach ( $fields[ $type ] as $field_name => $field ) {
 
-			$value = ( 'phone' === $field_name ) ?  preg_replace( '/\D/', '', $field['value'] ) : preg_replace( '/[^\w\d\s!]/', '', $field['value'] );
+			if ( 'phone' === $field_name ) {
+
+				$value = preg_replace( '/\D/', '', $field['value'] );
+
+			} else {
+
+				// authorize.net claims to support unicode, but not all code points yet. Unrecognized code points will display in their control panel with question marks
+				$value = SV_WC_Helper::str_to_sane_utf8( $field['value'] );
+			}
 
 			if ( $value ) {
 				$address[ $field_name ] = SV_WC_Helper::str_truncate( $value, $field['limit'] );
@@ -616,6 +624,28 @@ class WC_Authorize_Net_AIM_API_Request implements SV_WC_Payment_Gateway_API_Requ
 		}
 
 		return $string;
+	}
+
+
+	/**
+	 * Returns the method for this request. Authorize.net uses the API default
+	 * (POST)
+	 *
+	 * @since 3.4.0
+	 * @return null
+	 */
+	public function get_method() { }
+
+
+	/**
+	 * Returns the request path for this request. Authorize.net request paths
+	 * do not vary per request.
+	 *
+	 * @since 3.4.0
+	 * @return string
+	 */
+	public function get_path() {
+		return '';
 	}
 
 

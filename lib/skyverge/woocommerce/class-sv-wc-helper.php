@@ -45,8 +45,8 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 		 * Note: case-sensitive
 		 *
 		 * @since 2.2.0
-		 * @param $haystack
-		 * @param $needle
+		 * @param string $haystack
+		 * @param string $needle
 		 * @return bool
 		 */
 		public static function str_starts_with( $haystack, $needle) {
@@ -72,8 +72,8 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 		 * Note: case-sensitive
 		 *
 		 * @since 2.2.0
-		 * @param $haystack
-		 * @param $needle
+		 * @param string $haystack
+		 * @param string $needle
 		 * @return bool
 		 */
 		public static function str_ends_with( $haystack, $needle ) {
@@ -102,8 +102,8 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 		 * Note: case-sensitive
 		 *
 		 * @since 2.2.0
-		 * @param $haystack
-		 * @param $needle
+		 * @param string $haystack
+		 * @param string $needle
 		 * @return bool
 		 */
 		public static function str_exists( $haystack, $needle ) {
@@ -176,6 +176,37 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 			$ascii = iconv( 'UTF-8', 'ASCII//IGNORE', $string );
 
 			return false === $ascii ? preg_replace( '/[^a-zA-Z0-9]/', '', $string ) : $ascii;
+		}
+
+
+		/**
+		 * Return a string with insane UTF-8 characters removed, like invisible
+		 * characters, unused code points, and other weirdness. It should
+		 * accept the common types of characters defined in Unicode.
+		 *
+		 * The following are allowed characters:
+		 *
+		 * p{L} - any kind of letter from any language
+		 * p{Mn} - a character intended to be combined with another character without taking up extra space (e.g. accents, umlauts, etc.)
+		 * p{Mc} - a character intended to be combined with another character that takes up extra space (vowel signs in many Eastern languages)
+		 * p{Nd} - a digit zero through nine in any script except ideographic scripts
+		 * p{Zs} - a whitespace character that is invisible, but does take up space
+		 * p{P} - any kind of punctuation character
+		 * p{Sm} - any mathematical symbol
+		 * p{Sc} - any currency sign
+		 *
+		 * pattern definitions from http://www.regular-expressions.info/unicode.html
+		 *
+		 * @since 4.0.0
+		 * @param string $string
+		 * @return mixed
+		 */
+		public static function str_to_sane_utf8( $string ) {
+
+			$sane_string = preg_replace( '/[^\p{L}\p{Mn}\p{Mc}\p{Nd}\p{Zs}\p{P}\p{Sm}\p{Sc}]/u', '', $string );
+
+			// preg_replace with the /u modifier can return null or false on failure
+			return ( is_null( $sane_string ) || false === $sane_string ) ? $string : $sane_string;
 		}
 
 
@@ -350,7 +381,7 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 		 */
 		public static function number_format( $number ) {
 
-			return number_format( $number, 2, '.', '' );
+			return number_format( (float) $number, 2, '.', '' );
 		}
 
 
@@ -385,10 +416,12 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 
 				$product = $order->get_product_from_item( $item );
 
-				// get meta + format it
-				$item_meta = new WC_Order_Item_Meta( $item['item_meta'] );
+				$meta = SV_WC_Plugin_Compatibility::is_wc_version_gte_2_4() ? $item : $item['item_meta'];
 
-				$item_meta = SV_WC_Plugin_Compatibility::get_formatted_item_meta( $item_meta );
+				// get meta + format it
+				$item_meta = new WC_Order_Item_Meta( $meta );
+
+				$item_meta = $item_meta->get_formatted();
 
 				if ( ! empty( $item_meta ) ) {
 
@@ -410,7 +443,7 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 				$line_item->name        = htmlentities( $item['name'], ENT_QUOTES, 'UTF-8', false );
 				$line_item->description = htmlentities( $item_desc, ENT_QUOTES, 'UTF-8', false );
 				$line_item->quantity    = $item['qty'];
-				$line_item->item_total  = $order->get_item_total( $item );
+				$line_item->item_total  = isset( $item['recurring_line_total'] ) ? $item['recurring_line_total'] : $order->get_item_total( $item );
 				$line_item->line_total  = $order->get_line_total( $item );
 				$line_item->meta        = $item_meta;
 				$line_item->product     = is_object( $product ) ? $product : null;
@@ -554,50 +587,59 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 				// ensure localized strings are used
 				$javascript .= "
 					function getEnhancedSelectFormatString() {
+
+						if ( 'undefined' !== typeof wc_select_params ) {
+							wc_enhanced_select_params = wc_select_params;
+						}
+
+						if ( 'undefined' === typeof wc_enhanced_select_params ) {
+							return {};
+						}
+
 						var formatString = {
 							formatMatches: function( matches ) {
 								if ( 1 === matches ) {
-									return wc_select_params.i18n_matches_1;
+									return wc_enhanced_select_params.i18n_matches_1;
 								}
 
-								return wc_select_params.i18n_matches_n.replace( '%qty%', matches );
+								return wc_enhanced_select_params.i18n_matches_n.replace( '%qty%', matches );
 							},
 							formatNoMatches: function() {
-								return wc_select_params.i18n_no_matches;
+								return wc_enhanced_select_params.i18n_no_matches;
 							},
 							formatAjaxError: function( jqXHR, textStatus, errorThrown ) {
-								return wc_select_params.i18n_ajax_error;
+								return wc_enhanced_select_params.i18n_ajax_error;
 							},
 							formatInputTooShort: function( input, min ) {
 								var number = min - input.length;
 
 								if ( 1 === number ) {
-									return wc_select_params.i18n_input_too_short_1
+									return wc_enhanced_select_params.i18n_input_too_short_1
 								}
 
-								return wc_select_params.i18n_input_too_short_n.replace( '%qty%', number );
+								return wc_enhanced_select_params.i18n_input_too_short_n.replace( '%qty%', number );
 							},
 							formatInputTooLong: function( input, max ) {
 								var number = input.length - max;
 
 								if ( 1 === number ) {
-									return wc_select_params.i18n_input_too_long_1
+									return wc_enhanced_select_params.i18n_input_too_long_1
 								}
 
-								return wc_select_params.i18n_input_too_long_n.replace( '%qty%', number );
+								return wc_enhanced_select_params.i18n_input_too_long_n.replace( '%qty%', number );
 							},
 							formatSelectionTooBig: function( limit ) {
 								if ( 1 === limit ) {
-									return wc_select_params.i18n_selection_too_long_1;
+									return wc_enhanced_select_params.i18n_selection_too_long_1;
 								}
 
-								return wc_select_params.i18n_selection_too_long_n.replace( '%qty%', number );
+								return wc_enhanced_select_params.i18n_selection_too_long_n.replace( '%qty%', number );
 							},
 							formatLoadMore: function( pageNumber ) {
-								return wc_select_params.i18n_load_more;
+								return wc_enhanced_select_params.i18n_load_more;
 							},
 							formatSearching: function() {
-								return wc_select_params.i18n_searching;
+								return wc_enhanced_select_params.i18n_searching;
 							}
 						};
 
@@ -673,6 +715,18 @@ if ( ! class_exists( 'SV_WC_Helper' ) ) :
 
 				do_action( 'sv_wc_select2_ajax_rendered' );
 			}
+		}
+
+
+		/**
+		 * Gets the full URL to the log file for a given $handle
+		 *
+		 * @since 4.0.0
+		 * @param string $handle log handle
+		 * @return string URL to the WC log file identified by $handle
+		 */
+		public static function get_wc_log_file_url( $handle ) {
+			return admin_url( sprintf( 'admin.php?page=wc-status&tab=logs&log_file=%s-%s-log', $handle, sanitize_file_name( wp_hash( $handle ) ) ) );
 		}
 
 
