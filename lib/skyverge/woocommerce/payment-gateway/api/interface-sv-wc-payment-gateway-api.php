@@ -18,7 +18,7 @@
  *
  * @package   SkyVerge/WooCommerce/Payment-Gateway/API
  * @author    SkyVerge
- * @copyright Copyright (c) 2013-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2013-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -180,7 +180,7 @@ interface SV_WC_Payment_Gateway_API {
 	 * Returns the most recent request object
 	 *
 	 * @since 1.0.0
-	 * @return SV_WC_Payment_Gateway_API_Request the most recent request object
+	 * @return \SV_WC_Payment_Gateway_API_Request the most recent request object
 	 */
 	public function get_request();
 
@@ -189,9 +189,19 @@ interface SV_WC_Payment_Gateway_API {
 	 * Returns the most recent response object
 	 *
 	 * @since 1.0.0
-	 * @return SV_WC_Payment_Gateway_API_Response the most recent response object
+	 * @return \SV_WC_Payment_Gateway_API_Response the most recent response object
 	 */
 	public function get_response();
+
+
+	/**
+	 * Returns the WC_Order object associated with the request, if any
+	 *
+	 * @since 4.1.0
+	 * @return \WC_Order
+	 */
+	public function get_order();
+
 
 }
 

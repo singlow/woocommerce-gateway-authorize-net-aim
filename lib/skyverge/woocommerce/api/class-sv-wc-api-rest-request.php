@@ -18,7 +18,7 @@
  *
  * @package   SkyVerge/WooCommerce/API/Request
  * @author    SkyVerge
- * @copyright Copyright (c) 2013-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2013-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -98,24 +98,6 @@ class SV_WC_API_REST_Request implements SV_WC_API_Request {
 	}
 
 
-	/**
-	 * Returns the request params, url encoded
-	 *
-	 * @since 4.0.0
-	 * @see SV_WC_API_REST_Request::get_params()
-	 * @return array the request params, url encoded
-	 */
-	public function get_encoded_params() {
-
-		$encoded_params = array();
-		foreach ( $this->get_params() as $key => $value ) {
-			$encoded_params[ $key ] = urlencode( $value );
-		}
-
-		return $encoded_params;
-	}
-
-
 	/** API Helper Methods ******************************************************/
 
 
@@ -129,7 +111,7 @@ class SV_WC_API_REST_Request implements SV_WC_API_Request {
 	public function to_string() {
 
 		// URL encode params
-		return build_query( $this->get_encoded_params() );
+		return http_build_query( $this->get_params() );
 	}
 
 

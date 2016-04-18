@@ -5,11 +5,11 @@
  * Description: Accept Credit Cards and eChecks via Authorize.net AIM in your WooCommerce store
  * Author: WooThemes / SkyVerge
  * Author URI: http://www.woothemes.com
- * Version: 3.4.2
+ * Version: 3.5.1
  * Text Domain: woocommerce-gateway-authorize-net-aim
  * Domain Path: /i18n/languages/
  *
- * Copyright: (c) 2011-2015 SkyVerge, Inc. (info@skyverge.com)
+ * Copyright: (c) 2011-2016 SkyVerge, Inc. (info@skyverge.com)
  *
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -17,7 +17,7 @@
  * @package   WC-Gateway-Authorize-Net-AIM
  * @author    SkyVerge
  * @category  Gateway
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -41,7 +41,7 @@ if ( ! class_exists( 'SV_WC_Framework_Bootstrap' ) ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'lib/skyverge/woocommerce/class-sv-wc-framework-bootstrap.php' );
 }
 
-SV_WC_Framework_Bootstrap::instance()->register_plugin( '4.0.1', __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array( 'is_payment_gateway' => true, 'minimum_wc_version' => '2.2', 'backwards_compatible' => '4.0.0' ) );
+SV_WC_Framework_Bootstrap::instance()->register_plugin( '4.2.1', __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array( 'is_payment_gateway' => true, 'minimum_wc_version' => '2.3.6', 'backwards_compatible' => '4.2.0' ) );
 
 function init_woocommerce_gateway_authorize_net_aim() {
 
@@ -108,7 +108,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/** string version number */
-	const VERSION = '3.4.2';
+	const VERSION = '3.5.1';
 
 	/** @var WC_Authorize_Net_AIM single instance of this plugin */
 	protected static $instance;
@@ -116,7 +116,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	/** string the plugin id */
 	const PLUGIN_ID = 'authorize_net_aim';
 
-	/** string plugin text domain */
+	/** string plugin text domain, DEPRECATED as of 3.5.0 */
 	const TEXT_DOMAIN = 'woocommerce-gateway-authorize-net-aim';
 
 	/** string the gateway class name */
@@ -142,7 +142,6 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 		parent::__construct(
 			self::PLUGIN_ID,
 			self::VERSION,
-			self::TEXT_DOMAIN,
 			array(
 				'gateways' => array(
 					self::CREDIT_CARD_GATEWAY_ID => self::CREDIT_CARD_GATEWAY_CLASS_NAME,
@@ -162,7 +161,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 		// load templates
 		add_action( 'init', array( $this, 'include_template_functions' ), 25 );
 
-		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+		if ( is_admin() && ! is_ajax() ) {
 
 			// handle activating/deactivating legacy SIM gateway
 			add_action( 'admin_action_wc_authorize_net_toggle_sim', array( $this, 'maybe_toggle_sim_gateway' ) );
@@ -320,8 +319,8 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 							's'             => $s ),
 						'admin.php' ),
 					$this->get_file() ) ),
-				esc_attr__( 'Deactivate SIM gateway', self::TEXT_DOMAIN ),
-				__( 'Deactivate SIM gateway', self::TEXT_DOMAIN )
+				esc_attr__( 'Deactivate SIM gateway', 'woocommerce-gateway-authorize-net-aim' ),
+				__( 'Deactivate SIM gateway', 'woocommerce-gateway-authorize-net-aim' )
 			);
 		} else {
 			$actions['activate_sim'] = sprintf(
@@ -336,8 +335,8 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 							's'             => $s ),
 						'admin.php' ),
 					$this->get_file() ) ),
-				esc_attr__( 'Activate SIM gateway', self::TEXT_DOMAIN ),
-				__( 'Activate SIM gateway', self::TEXT_DOMAIN )
+				esc_attr__( 'Activate SIM gateway', 'woocommerce-gateway-authorize-net-aim' ),
+				__( 'Activate SIM gateway', 'woocommerce-gateway-authorize-net-aim' )
 			);
 		}
 
@@ -358,7 +357,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 		return sprintf( '<a href="%s">%s</a>',
 			$this->get_settings_url( $gateway_id ),
-			self::CREDIT_CARD_GATEWAY_ID === $gateway_id ? __( 'Configure Credit Cards', self::TEXT_DOMAIN ) : __( 'Configure eChecks', self::TEXT_DOMAIN )
+			self::CREDIT_CARD_GATEWAY_ID === $gateway_id ? __( 'Configure Credit Cards', 'woocommerce-gateway-authorize-net-aim' ) : __( 'Configure eChecks', 'woocommerce-gateway-authorize-net-aim' )
 		);
 	}
 
@@ -413,9 +412,9 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 		// legacy gateway notice
 		if ( ! empty( $_GET['wc_authorize_net_aim_sim_active'] ) ) {
 			if ( 'activate' == $_GET['wc_authorize_net_aim_sim_active'] ) {
-				$message = __( "Legacy Authorize.net SIM gateway is now active.", self::TEXT_DOMAIN );
+				$message = __( "Legacy Authorize.net SIM gateway is now active.", 'woocommerce-gateway-authorize-net-aim' );
 			} else {
-				$message = __( "Legacy Authorize.net SIM gateway is now inactive.", self::TEXT_DOMAIN );
+				$message = __( "Legacy Authorize.net SIM gateway is now inactive.", 'woocommerce-gateway-authorize-net-aim' );
 			}
 			$this->get_admin_notice_handler()->add_admin_notice( $message, 'authorize-net-sim-status', array( 'dismissible' => false, 'notice_class' => 'updated' ) );
 		}
@@ -460,7 +459,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 * @return string the plugin name
 	 */
 	public function get_plugin_name() {
-		return __( 'WooCommerce Authorize.net AIM Gateway', self::TEXT_DOMAIN );
+		return __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' );
 	}
 
 
@@ -604,15 +603,7 @@ function wc_authorize_net_aim() {
 	return WC_Authorize_Net_AIM::instance();
 }
 
-
-/**
- * The WC_Authorize_Net_AIM global object, exists only for backwards compat
- *
- * @deprecated 3.3.0
- * @name $wc_authorize_net_aim
- * @global WC_Authorize_Net_AIM $GLOBALS['wc_authorize_net_aim']
- */
-$GLOBALS['wc_authorize_net_aim'] = wc_authorize_net_aim();
-
+// fire it up!
+wc_authorize_net_aim();
 
 } // init_woocommerce_gateway_authorize_net_aim

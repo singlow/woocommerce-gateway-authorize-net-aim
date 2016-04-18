@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Gateway/Credit-Card
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -47,10 +47,9 @@ class WC_Gateway_Authorize_Net_AIM_Credit_Card extends WC_Gateway_Authorize_Net_
 		parent::__construct(
 			WC_Authorize_Net_AIM::CREDIT_CARD_GATEWAY_ID,
 			wc_authorize_net_aim(),
-			WC_Authorize_Net_AIM::TEXT_DOMAIN,
 			array(
-				'method_title'       => __( 'Authorize.net AIM', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'method_description' => __( 'Allow customers to securely pay using their credit cards with Authorize.net AIM.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'method_title'       => __( 'Authorize.net AIM', 'woocommerce-gateway-authorize-net-aim' ),
+				'method_description' => __( 'Allow customers to securely pay using their credit cards with Authorize.net AIM.', 'woocommerce-gateway-authorize-net-aim' ),
 				'supports'           => array(
 					self::FEATURE_PRODUCTS,
 					self::FEATURE_CARD_TYPES,
@@ -62,7 +61,7 @@ class WC_Gateway_Authorize_Net_AIM_Credit_Card extends WC_Gateway_Authorize_Net_
 					self::FEATURE_VOIDS,
 				 ),
 				'payment_type'       => 'credit-card',
-				'environments'       => array( 'production' => __( 'Production', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'test' => __( 'Test', WC_Authorize_Net_AIM::TEXT_DOMAIN ) ),
+				'environments'       => array( 'production' => __( 'Production', 'woocommerce-gateway-authorize-net-aim' ), 'test' => __( 'Test', 'woocommerce-gateway-authorize-net-aim' ) ),
 				'shared_settings'    => $this->shared_settings_names,
 			)
 		);
@@ -116,10 +115,10 @@ class WC_Gateway_Authorize_Net_AIM_Credit_Card extends WC_Gateway_Authorize_Net_
 		$order = parent::get_order_for_refund( $order, $amount, $reason );
 
 		$order->refund->account_four = $this->get_order_meta( $order->id, 'account_four' );
-		$order->refund->expiry_date = date( 'm-Y', strtotime( $this->get_order_meta( $order->id, 'card_expiry_date' ) ) );
+		$order->refund->expiry_date = date( 'm-Y', strtotime( '20' . $this->get_order_meta( $order->id, 'card_expiry_date' ) ) );
 
 		if ( ! $order->refund->account_four ) {
-			return new WP_Error( 'wc_' . $this->get_id() . '_refund_error', __( '%s Refund error - order is missing credit card last four.', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $this->get_method_title() );
+			return new WP_Error( 'wc_' . $this->get_id() . '_refund_error', __( '%s Refund error - order is missing credit card last four.', 'woocommerce-gateway-authorize-net-aim' ), $this->get_method_title() );
 		}
 
 		return $order;

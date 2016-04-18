@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/API
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -36,13 +36,16 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/** the production endpoint */
-	const PRODUCTION_ENDPOINT = 'https://api2.authorize.net/xml/v1/request.api';
+	const PRODUCTION_ENDPOINT = 'https://api.authorize.net/xml/v1/request.api';
 
 	/** the test endpoint */
 	const TEST_ENDPOINT = 'https://apitest.authorize.net/xml/v1/request.api';
 
 	/** @var string request URI */
 	protected $request_uri;
+
+	/** @var \WC_Order|null order associated with the request, if any */
+	protected $order;
 
 	/** @var string gateway ID */
 	private $gateway_id;
@@ -99,6 +102,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 */
 	public function credit_card_charge( WC_Order $order ) {
 
+		$this->order = $order;
+
 		$request = $this->get_new_request();
 
 		$request->create_credit_card_charge( $order );
@@ -133,6 +138,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @throws Exception network timeouts, etc
 	 */
 	public function credit_card_authorization( WC_Order $order ) {
+
+		$this->order = $order;
 
 		$request = $this->get_new_request();
 
@@ -170,6 +177,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 */
 	public function credit_card_capture( WC_Order $order ) {
 
+		$this->order = $order;
+
 		$request = $this->get_new_request();
 
 		$request->create_credit_card_capture( $order );
@@ -189,6 +198,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @throws Exception network timeouts, etc
 	 */
 	public function check_debit( WC_Order $order ) {
+
+		$this->order = $order;
 
 		$request = $this->get_new_request();
 
@@ -210,6 +221,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @throws SV_WC_API_Exception network timeouts, etc
 	 */
 	public function refund( WC_Order $order ) {
+
+		$this->order = $order;
 
 		$request = $this->get_new_request();
 
@@ -233,6 +246,8 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @throws SV_WC_API_Exception network timeouts, etc
 	 */
 	public function void( WC_Order $order ) {
+
+		$this->order = $order;
 
 		$request = $this->get_new_request();
 
@@ -326,7 +341,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 		// authorize.net should rarely return a non-200 status
 		if ( 200 != $this->get_response_code() ) {
 
-			throw new SV_WC_API_Exception( sprintf( __( 'HTTP %s: %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $this->get_response_code(), $this->get_response_message() ) );
+			throw new SV_WC_API_Exception( sprintf( __( 'HTTP %s: %s', 'woocommerce-gateway-authorize-net-aim' ), $this->get_response_code(), $this->get_response_message() ) );
 		}
 	}
 
@@ -345,7 +360,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 			$exception_code = intval( str_ireplace( array( 'E', 'I' ), '', $this->get_response()->get_api_error_code() ) );
 
-			throw new SV_WC_API_Exception( sprintf( __( 'Code: %s, Message: %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $this->get_response()->get_api_error_code(), $this->get_response()->get_api_error_message() ), $exception_code );
+			throw new SV_WC_API_Exception( sprintf( __( 'Code: %s, Message: %s', 'woocommerce-gateway-authorize-net-aim' ), $this->get_response()->get_api_error_code(), $this->get_response()->get_api_error_message() ), $exception_code );
 
 		} elseif ( $this->get_response()->is_test_request() ) {
 
@@ -371,6 +386,18 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/**
+	 * Return the order associated with the request, if any
+	 *
+	 * @since 3.4.3
+	 * @return \WC_Order|null
+	 */
+	public function get_order() {
+
+		return $this->order;
+	}
+
+
+	/**
 	 * Get the ID for the API, used primarily to namespace the action name
 	 * for broadcasting requests
 	 *
@@ -392,7 +419,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @return object
 	 */
 	protected function get_plugin() {
-		return $GLOBALS['wc_authorize_net_aim'];
+		return wc_authorize_net_aim();
 	}
 
 

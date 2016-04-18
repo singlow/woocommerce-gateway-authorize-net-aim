@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Gateway/SIM
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -35,7 +35,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id           = 'authorize_net_sim';
-		$this->method_title = __( 'Authorize.net SIM', WC_Authorize_Net_AIM::TEXT_DOMAIN );
+		$this->method_title = __( 'Authorize.net SIM', 'woocommerce-gateway-authorize-net-aim' );
 
 		$this->supports   = array( 'products' );
 
@@ -53,7 +53,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		}
 
 		// pay page fallback
-		add_action( 'woocommerce_receipt_' . $this->id, create_function( '$order', 'echo "<p>" . __( "Thank you for your order.", WC_Authorize_Net_AIM::TEXT_DOMAIN ) . "</p>";' ) );
+		add_action( 'woocommerce_receipt_' . $this->id, create_function( '$order', 'echo "<p>" . __( "Thank you for your order.", "woocommerce-gateway-authorize-net-aim" ) . "</p>";' ) );
 
 		// Save settings
 		if ( is_admin() ) {
@@ -72,44 +72,44 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		$this->form_fields = array(
 
 			'enabled' => array(
-				'title'   => __( 'Enable / Disable', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'label'   => __( 'Enable this gateway', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'   => __( 'Enable / Disable', 'woocommerce-gateway-authorize-net-aim' ),
+				'label'   => __( 'Enable this gateway', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'    => 'checkbox',
 				'default' => 'no',
 			),
 
 			'title' => array(
-				'title'    => __( 'Title', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Title', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
-				'desc_tip' => __( 'Payment method title that the customer will see during checkout.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'default'  => __( 'Credit card', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Payment method title that the customer will see during checkout.', 'woocommerce-gateway-authorize-net-aim' ),
+				'default'  => __( 'Credit card', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'description' => array(
-				'title'    => __( 'Description', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Description', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'textarea',
-				'desc_tip' => __( 'Payment method description that the customer will see during checkout.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'default'  => __( 'Pay securely using your credit card.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Payment method description that the customer will see during checkout.', 'woocommerce-gateway-authorize-net-aim' ),
+				'default'  => __( 'Pay securely using your credit card.', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'apilogin' => array(
-				'title'    => __( 'API Login', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'API Login', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
-				'desc_tip' => __( 'This is the API Login supplied by Authorize.net.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'This is the API Login supplied by Authorize.net.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'  => '',
 			),
 
 			'transkey' => array(
-				'title'    => __( 'Transaction Key', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
-				'desc_tip' => __( 'This is the Transaction Key supplied by Authorize.net.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'This is the Transaction Key supplied by Authorize.net.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'  => '',
 			),
 
 			'salemethod' => array(
-				'title'    => __( 'Sale Method', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Sale Method', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'select',
-				'desc_tip' => __( 'Select which sale method to use. Authorize Only will authorize the customers card for the purchase amount only.  Authorize &amp; Capture will authorize the customer\'s card and collect funds.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Select which sale method to use. Authorize Only will authorize the customers card for the purchase amount only.  Authorize &amp; Capture will authorize the customer\'s card and collect funds.', 'woocommerce-gateway-authorize-net-aim' ),
 				'options'  => array(
 					'AUTH_ONLY'    => 'Authorize Only',
 					'AUTH_CAPTURE' => 'Authorize &amp; Capture',
@@ -118,18 +118,18 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			),
 
 			'gatewayurl' => array(
-				'title'    => __( 'Gateway URL', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Gateway URL', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
-				'desc_tip' => __( 'URL for Authorize.net gateway processor.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'URL for Authorize.net gateway processor.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'  => 'https://secure.authorize.net/gateway/transact.dll',
 			),
 
 			'cardtypes' => array(
-				'title'    => __( 'Accepted Cards', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Accepted Cards', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'multiselect',
-				'class'    => 'chosen_select',
+				'class'    => 'wc-enhanced-select',
 				'css'      => 'width: 350px;',
-				'desc_tip' => __( 'Select which card types to accept.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Select which card types to accept.', 'woocommerce-gateway-authorize-net-aim' ),
 				'options' => array(
 					'MasterCard'       => 'MasterCard',
 					'Visa'             => 'Visa',
@@ -140,39 +140,39 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			),
 
 			'cvv' => array(
-				'title'   => __( 'CVV', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'label'   => __( 'Require customer to enter credit card CVV code', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'   => __( 'CVV', 'woocommerce-gateway-authorize-net-aim' ),
+				'label'   => __( 'Require customer to enter credit card CVV code', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'    => 'checkbox',
 				'default' => 'no',
 			),
 
 			'testmode' => array(
-				'title'       => __( 'Authorize.net Test Mode', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'label'       => __( 'Enable Test Mode', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'       => __( 'Authorize.net Test Mode', 'woocommerce-gateway-authorize-net-aim' ),
+				'label'       => __( 'Enable Test Mode', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'        => 'checkbox',
-				'description' => __( 'Place the payment gateway in test mode.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'description' => __( 'Place the payment gateway in test mode.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'     => 'no',
 			),
 
 			'require_billing_fields' => array(
-				'title'    => __( 'Require Billing Fields?', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'desc_tip' => __( 'Enable this to require all billing fields at checkout. Certain payment processors require this to process transactions. Read the documentation to learn more.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Require Billing Fields?', 'woocommerce-gateway-authorize-net-aim' ),
+				'desc_tip' => __( 'Enable this to require all billing fields at checkout. Certain payment processors require this to process transactions. Read the documentation to learn more.', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'checkbox',
 				'default'  => 'no',
 			),
 
 			'debugon' => array(
-				'title'       => __( 'Debugging', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'label'       => __( 'Enable debug emails', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'       => __( 'Debugging', 'woocommerce-gateway-authorize-net-aim' ),
+				'label'       => __( 'Enable debug emails', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'        => 'checkbox',
-				'description' => __( 'Receive emails containing the data sent to and from Authorize.net. Only works in <strong>Test Mode</strong>.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'description' => __( 'Receive emails containing the data sent to and from Authorize.net. Only works in <strong>Test Mode</strong>.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'     => 'no',
 			),
 
 			'debugrecipient' => array(
-				'title'    => __( 'Debugging Email', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Debugging Email', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
-				'desc_tip' => __( 'Who should receive the debugging emails.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Who should receive the debugging emails.', 'woocommerce-gateway-authorize-net-aim' ),
 				'default'  =>  get_option( 'admin_email' ),
 			),
 
@@ -195,15 +195,15 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		<fieldset>
 
 			<p class="form-row form-row-first">
-				<label for="ccnum"><?php _e( 'Credit Card number', WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+				<label for="ccnum"><?php _e( 'Credit Card number', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 				<input type="text" class="input-text" id="ccnum" name="ccnum" />
 			</p>
 
 			<p class="form-row form-row-last">
-				<label for="cardtype"><?php _e( 'Card type', WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+				<label for="cardtype"><?php _e( 'Card type', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 				<select name="cardtype" id="cardtype" class="woocommerce-select">
 					<?php foreach ( $this->cardtypes as $type ) : ?>
-						<option value="<?php echo $type ?>"><?php _e($type, WC_Authorize_Net_AIM::TEXT_DOMAIN); ?></option>
+						<option value="<?php echo $type ?>"><?php _e($type, 'woocommerce-gateway-authorize-net-aim'); ?></option>
 					<?php endforeach; ?>
 				</select>
 			</p>
@@ -211,15 +211,15 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			<div class="clear"></div>
 
 			<p class="form-row form-row-first">
-				<label for="cc-expire-month"><?php _e( 'Expiration date', WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+				<label for="cc-expire-month"><?php _e( 'Expiration date', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 				<select name="expmonth" id="expmonth" class="woocommerce-select woocommerce-cc-month">
-					<option value=""><?php _e( 'Month', WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?></option>
+					<option value=""><?php _e( 'Month', 'woocommerce-gateway-authorize-net-aim' ); ?></option>
 					<?php foreach ( range( 1, 12 ) as $month ) : ?>
 						<option value="<?php echo $month; ?>"><?php printf( '%02d', $month ); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<select name="expyear" id="expyear" class="woocommerce-select woocommerce-cc-year">
-					<option value=""><?php _e( 'Year', WC_Authorize_Net_AIM::TEXT_DOMAIN ) ?></option>
+					<option value=""><?php _e( 'Year', 'woocommerce-gateway-authorize-net-aim' ) ?></option>
 					<?php
 						$years = array();
 						for ( $i = date( 'y' ); $i <= date( 'y' ) + 15; $i++ ) {
@@ -231,7 +231,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			<?php if ( 'yes' == $this->cvv ) : ?>
 
 			<p class="form-row form-row-last">
-				<label for="cvv"><?php _e( 'Card security code', WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+				<label for="cvv"><?php _e( 'Card security code', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 				<input type="text" class="input-text" id="cvv" name="cvv" maxlength="4" style="width:45px" />
 			</p>
 			<?php endif; ?>
@@ -316,9 +316,9 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 				'sslverify'    => false,
 			) );
 
-			if ( is_wp_error( $response ) ) throw new Exception( __( 'There was a problem connecting to the payment gateway.', WC_Authorize_Net_AIM::TEXT_DOMAIN ) );
+			if ( is_wp_error( $response ) ) throw new Exception( __( 'There was a problem connecting to the payment gateway.', 'woocommerce-gateway-authorize-net-aim' ) );
 
-			if ( empty( $response['body'] ) ) throw new Exception( __( 'Empty Authorize.net response.', WC_Authorize_Net_AIM::TEXT_DOMAIN ) );
+			if ( empty( $response['body'] ) ) throw new Exception( __( 'Empty Authorize.net response.', 'woocommerce-gateway-authorize-net-aim' ) );
 
 			$content = $response['body'];
 
@@ -379,7 +379,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			if ( ( 1 == $response['response_code'] ) || ( 4 == $response['response_code'] ) ) {
 				// Successful payment
 
-				$order->add_order_note( __( 'Authorize.net payment completed', WC_Authorize_Net_AIM::TEXT_DOMAIN ) . ' (Response Code: ' . $response['response_code'] . ')' );
+				$order->add_order_note( __( 'Authorize.net payment completed', 'woocommerce-gateway-authorize-net-aim' ) . ' (Response Code: ' . $response['response_code'] . ')' );
 				$order->payment_complete();
 
 				WC()->cart->empty_cart();
@@ -394,14 +394,14 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 
 				$this->send_debugging_email( "AUTHORIZE.NET ERROR:\nresponse_code:" . $response['response_code'] . "\nresponse_reasib_text:" .$response['response_reason_text'] );
 
-				$cancelNote = __( 'Authorize.net payment failed', WC_Authorize_Net_AIM::TEXT_DOMAIN ) . ' (Response Code: ' . $response['response_code'] . '). ' . __( 'Payment was rejected due to an error', WC_Authorize_Net_AIM::TEXT_DOMAIN ) . ': "' . $response['response_reason_text'] . '". ';
+				$cancelNote = __( 'Authorize.net payment failed', 'woocommerce-gateway-authorize-net-aim' ) . ' (Response Code: ' . $response['response_code'] . '). ' . __( 'Payment was rejected due to an error', 'woocommerce-gateway-authorize-net-aim' ) . ': "' . $response['response_reason_text'] . '". ';
 
 				$this->mark_order_as_failed( $order, $cancelNote, $response );
 
 			}
 
 		} catch( Exception $e ) {
-			$this->mark_order_as_failed( $order, sprintf( __( 'Connection error: %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $e->getMessage() ) );
+			$this->mark_order_as_failed( $order, sprintf( __( 'Connection error: %s', 'woocommerce-gateway-authorize-net-aim' ), $e->getMessage() ) );
 		}
 
 	}
@@ -423,12 +423,12 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		if ( 'yes' == $this->cvv ){
 			//check security code
 			if ( ! ctype_digit( $cardCSC ) ) {
-				wc_add_notice( __( 'Card security code is invalid (only digits are allowed)', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'error' );
+				wc_add_notice( __( 'Card security code is invalid (only digits are allowed)', 'woocommerce-gateway-authorize-net-aim' ), 'error' );
 				return false;
 			}
 
 			if ( ( strlen( $cardCSC ) != 3 && in_array( $cardType, array('Visa', 'MasterCard', 'Discover' ) ) ) || ( strlen( $cardCSC ) != 4 && $cardType == 'American Express' ) ) {
-				wc_add_notice( __( 'Card security code is invalid (wrong length)', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'error' );
+				wc_add_notice( __( 'Card security code is invalid (wrong length)', 'woocommerce-gateway-authorize-net-aim' ), 'error' );
 				return false;
 			}
 		}
@@ -442,7 +442,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			$cardExpirationYear < $currentYear ||
 			$cardExpirationYear > $currentYear + 20 ) {
 
-			wc_add_notice( __( 'Card expiration date is invalid', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'error' );
+			wc_add_notice( __( 'Card expiration date is invalid', 'woocommerce-gateway-authorize-net-aim' ), 'error' );
 			return false;
 
 		}
@@ -451,7 +451,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		$cardNumber = str_replace( array( ' ', '-' ), '', $cardNumber );
 
 		if ( empty( $cardNumber ) || ! ctype_digit( $cardNumber ) ) {
-			wc_add_notice( __( 'Card number is invalid', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'error' );
+			wc_add_notice( __( 'Card number is invalid', 'woocommerce-gateway-authorize-net-aim' ), 'error' );
 			return false;
 		}
 
@@ -468,7 +468,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 	 */
 	protected function mark_order_as_failed( $order, $error_message, $response = null ) {
 
-		$order_note = sprintf( __( 'Authorize.net AIM Payment Failed (%s)', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $error_message );
+		$order_note = sprintf( __( 'Authorize.net AIM Payment Failed (%s)', 'woocommerce-gateway-authorize-net-aim' ), $error_message );
 
 		// Mark order as failed if not already set, otherwise, make sure we add the order note so we can detect when someone fails to check out multiple times
 		if ( ! $order->has_status( 'failed' ) ) {
@@ -477,7 +477,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 			$order->add_order_note( $order_note );
 		}
 
-		wc_add_notice( __( 'An error occurred, please try again or try an alternate form of payment.', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'error' );
+		wc_add_notice( __( 'An error occurred, please try again or try an alternate form of payment.', 'woocommerce-gateway-authorize-net-aim' ), 'error' );
 
 	}
 
@@ -494,7 +494,7 @@ class WC_Gateway_Authorize_Net_SIM extends WC_Payment_Gateway {
 		if ( ! $this->debugrecipient )  return; // Recipient needed
 
 		// Send the email
-		wp_mail( $this->debugrecipient, __( 'Authorize.net Debug', WC_Authorize_Net_AIM::TEXT_DOMAIN ), $debug );
+		wp_mail( $this->debugrecipient, __( 'Authorize.net Debug', 'woocommerce-gateway-authorize-net-aim' ), $debug );
 	}
 
 

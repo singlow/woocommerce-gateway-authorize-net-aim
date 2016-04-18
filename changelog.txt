@@ -1,5 +1,25 @@
 *** WooCommerce Authorize.net AIM Gateway Changelog ***
 
+2016.01.26 - version 3.5.1
+ * Fix - Fix a PHP warning that could be logged during payment processing
+
+2016.01.14 - version 3.5.0
+ * Tweak - Use 3 character billing/shipping country codes for improved compatibility with European processors
+ * Misc - Added support for WooCommerce 2.5
+ * Misc - Removed support for WooCommerce 2.2
+
+2015.12.11 - version 3.4.6
+ * Fix - Fix address errors when AVS fraud filters are enabled
+
+2015.11.25 - version 3.4.5
+ * Tweak - Temporarily revert to legacy Authorize.net API endpoint pending Akamai endpoint fix
+
+2015.10.06 - version 3.4.4
+ * Fix - Fix issue with payment validation JS on Checkout > Pay page
+
+2015.09.15 - version 3.4.3
+ * Misc - Update SkyVerge Payment Gateway Framework
+
 2015.08.05 - version 3.4.2
  * Fix - Correctly load the sample check image
 

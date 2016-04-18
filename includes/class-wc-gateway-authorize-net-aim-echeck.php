@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Gateway/eCheck
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -46,15 +46,14 @@ class WC_Gateway_Authorize_Net_AIM_eCheck extends WC_Gateway_Authorize_Net_AIM {
 		parent::__construct(
 			WC_Authorize_Net_AIM::ECHECK_GATEWAY_ID,
 			wc_authorize_net_aim(),
-			WC_Authorize_Net_AIM::TEXT_DOMAIN,
 			array(
-				'method_title'       => __( 'Authorize.net AIM eCheck', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
-				'method_description' => __( 'Allow customers to securely pay using their checking accounts with Authorize.net AIM.', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'method_title'       => __( 'Authorize.net AIM eCheck', 'woocommerce-gateway-authorize-net-aim' ),
+				'method_description' => __( 'Allow customers to securely pay using their checking accounts with Authorize.net AIM.', 'woocommerce-gateway-authorize-net-aim' ),
 				'supports'           => array(
 					self::FEATURE_PRODUCTS,
 				 ),
 				'payment_type'       => 'echeck',
-				'environments'       => array( 'production' => __( 'Production', WC_Authorize_Net_AIM::TEXT_DOMAIN ), 'test' => __( 'Test', WC_Authorize_Net_AIM::TEXT_DOMAIN ) ),
+				'environments'       => array( 'production' => __( 'Production', 'woocommerce-gateway-authorize-net-aim' ), 'test' => __( 'Test', 'woocommerce-gateway-authorize-net-aim' ) ),
 				'shared_settings'    => $this->shared_settings_names,
 			)
 		);

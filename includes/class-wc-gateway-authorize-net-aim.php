@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Gateway
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -74,31 +74,31 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 		return array(
 
 			'api_login_id' => array(
-				'title'    => __( 'API Login ID', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
 				'class'    => 'environment-field production-field',
-				'desc_tip' => __( 'Your Authorize.net API Login ID', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Your Authorize.net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'api_transaction_key' => array(
-				'title'    => __( 'API Transaction Key', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
 				'class'    => 'environment-field production-field',
-				'desc_tip' => __( 'Your Authorize.net API Transaction Key', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Your Authorize.net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'test_api_login_id' => array(
-				'title'    => __( 'Test API Login ID', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Test API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
 				'class'    => 'environment-field test-field',
-				'desc_tip' => __( 'Your test Authorize.net API Login ID', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Your test Authorize.net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'test_api_transaction_key' => array(
-				'title'    => __( 'Test API Transaction Key', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'title'    => __( 'Test API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
 				'class'    => 'environment-field test-field',
-				'desc_tip' => __( 'Your test Authorize.net API Transaction Key', WC_Authorize_Net_AIM::TEXT_DOMAIN ),
+				'desc_tip' => __( 'Your test Authorize.net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 		);
 	}
@@ -115,7 +115,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 	 * @param int $order_id order ID being processed
 	 * @return WC_Order object with payment and transaction information attached
 	 */
-	protected function get_order( $order_id ) {
+	public function get_order( $order_id ) {
 
 		// add common order members
 		$order = parent::get_order( $order_id );
@@ -134,7 +134,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 		 * @param int $order_id The order ID being processed
 		 * @param WC_Gateway_Authorize_Net_AIM $aim The gateway class instance
 		 */
-		$order->description = apply_filters( 'wc_authorize_net_aim_transaction_description', sprintf( _x( '%s - Order %s', 'Order description', WC_Authorize_Net_AIM::TEXT_DOMAIN ), esc_html( get_bloginfo( 'name' ) ), $order->get_order_number() ), $order_id, $this );
+		$order->description = apply_filters( 'wc_authorize_net_aim_transaction_description', sprintf( _x( '%s - Order %s', 'Order description', 'woocommerce-gateway-authorize-net-aim' ), wp_specialchars_decode( get_bloginfo( 'name' ) ), $order->get_order_number() ), $order_id, $this );
 
 		return $order;
 	}

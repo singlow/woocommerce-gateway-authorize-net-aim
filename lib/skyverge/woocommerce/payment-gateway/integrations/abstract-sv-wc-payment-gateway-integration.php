@@ -16,7 +16,7 @@
  * versions in the future. If you wish to customize the plugin for your
  * needs please refer to http://www.skyverge.com
  *
- * @package   SkyVerge/WooCommerce/Payment-Gateway/Exceptions
+ * @package   SkyVerge/WooCommerce/Payment-Gateway/Classes
  * @author    SkyVerge
  * @copyright Copyright (c) 2013-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
@@ -24,11 +24,45 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'SV_WC_Payment_Gateway_Exception' ) ) :
+if ( ! class_exists( 'SV_WC_Payment_Gateway_Integration' ) ) :
 
 /**
- * Payment Gateway Exception - generic payment failure Exception
+ * Abstract Integration
+ *
+ * @since 4.1.0
  */
-class SV_WC_Payment_Gateway_Exception extends SV_WC_Plugin_Exception { }
+abstract class SV_WC_Payment_Gateway_Integration {
+
+
+	/** @var \SV_WC_Payment_Gateway_Direct direct gateway instance */
+	protected $gateway;
+
+
+	/**
+	 * Boostrap class
+	 *
+	 * @since 4.1.0
+	 * @param \SV_WC_Payment_Gateway_Direct $gateway direct gateway instance
+	 */
+	public function __construct( SV_WC_Payment_Gateway_Direct $gateway ) {
+
+		$this->gateway = $gateway;
+	}
+
+
+	/**
+	 * Return the gateway for the integration
+	 *
+	 * @since 4.1.0
+	 * @return \SV_WC_Payment_Gateway_Direct
+	 */
+	public function get_gateway() {
+
+		return $this->gateway;
+	}
+
+
+}
+
 
 endif;  // class exists check

@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Templates/Payment-Fields/Credit-Card
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -39,20 +39,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 <fieldset>
 	<div class="wc-authorize-net-aim-new-payment-method-form js-wc-authorize-net-aim-new-payment-method-form">
 		<p class="form-row form-row-first">
-			<label for="wc-authorize-net-aim-account-number"><?php _e( "Credit Card Number", WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+			<label for="wc-authorize-net-aim-account-number"><?php esc_html_e( 'Credit Card Number', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 			<input type="text" class="input-text js-wc-payment-gateway-account-number" id="wc-authorize-net-aim-account-number" name="wc-authorize-net-aim-account-number" maxlength="19" autocomplete="off" value="<?php echo esc_attr( $payment_method_defaults['account-number'] ); ?>" />
 		</p>
 
 		<p class="form-row form-row-last">
-			<label for="wc-authorize-net-aim-exp-month"><?php _e( "Expiration Date", WC_Authorize_Net_AIM::TEXT_DOMAIN ); ?> <span class="required">*</span></label>
+			<label for="wc-authorize-net-aim-exp-month"><?php esc_html_e( 'Expiration Date', 'woocommerce-gateway-authorize-net-aim' ); ?> <span class="required">*</span></label>
 			<select name="wc-authorize-net-aim-exp-month" id="wc-authorize-net-aim-exp-month" class="js-wc-payment-gateway-card-exp-month" style="width:auto;">
-				<option value=""><?php _e( 'Month', WC_Authorize_Net_AIM::TEXT_DOMAIN ) ?></option>
+				<option value=""><?php esc_html_e( 'Month', 'woocommerce-gateway-authorize-net-aim' ) ?></option>
 				<?php foreach ( range( 1, 12 ) as $month ) : ?>
 					<option value="<?php printf( '%02d', $month ) ?>" <?php selected( $payment_method_defaults['exp-month'], $month ); ?>><?php printf( '%02d', $month ) ?></option>
 				<?php endforeach; ?>
 			</select>
 			<select name="wc-authorize-net-aim-exp-year" id="wc-authorize-net-aim-exp-year" class="js-wc-payment-gateway-card-exp-year" style="width:auto;">
-				<option value=""><?php _e( 'Year', WC_Authorize_Net_AIM::TEXT_DOMAIN ) ?></option>
+				<option value=""><?php esc_html_e( 'Year', 'woocommerce-gateway-authorize-net-aim' ) ?></option>
 				<?php foreach ( range( date( 'Y' ), date( 'Y' ) + 10 ) as $year ) : ?>
 					<option value="<?php echo $year ?>" <?php selected( $payment_method_defaults['exp-year'], $year ); ?>><?php echo $year ?></option>
 				<?php endforeach; ?>
@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 		<?php if ( $enable_csc ) : ?>
 			<p class="form-row form-row-wide">
-				<label for="wc-authorize-net-aim-csc"><?php _e( "Card Security Code", WC_Authorize_Net_AIM::TEXT_DOMAIN ) ?> <span class="required">*</span></label>
+				<label for="wc-authorize-net-aim-csc"><?php esc_html_e( "Card Security Code", 'woocommerce-gateway-authorize-net-aim' ) ?> <span class="required">*</span></label>
 				<input type="text" class="input-text js-wc-payment-gateway-csc" id="wc-authorize-net-aim-csc" name="wc-authorize-net-aim-csc" maxlength="4" style="width:60px" autocomplete="off" value="<?php echo esc_attr( $payment_method_defaults['csc'] ); ?>" />
 			</p>
 			<div class="clear"></div>

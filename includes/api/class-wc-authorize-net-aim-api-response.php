@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/API/Response
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -140,7 +140,7 @@ class WC_Authorize_Net_AIM_API_Response implements SV_WC_Payment_Gateway_API_Res
 	public function get_api_error_code() {
 
 		if ( ! isset( $this->response_xml->messages->message->code ) ) {
-			return __( 'N/A', WC_Authorize_Net_AIM::TEXT_DOMAIN );
+			return __( 'N/A', 'woocommerce-gateway-authorize-net-aim' );
 		}
 
 		return (string) $this->response_xml->messages->message->code;
@@ -156,7 +156,7 @@ class WC_Authorize_Net_AIM_API_Response implements SV_WC_Payment_Gateway_API_Res
 	public function get_api_error_message() {
 
 		if ( ! isset( $this->response_xml->messages->message->text ) ) {
-			return __( 'N/A', WC_Authorize_Net_AIM::TEXT_DOMAIN );
+			return __( 'N/A', 'woocommerce-gateway-authorize-net-aim' );
 		}
 
 		$message = (string) $this->response_xml->messages->message->text;
@@ -298,7 +298,7 @@ class WC_Authorize_Net_AIM_API_Response implements SV_WC_Payment_Gateway_API_Res
 
 			foreach ( $this->response_xml->transactionResponse->messages->message as $message ) {
 
-				$messages[] = sprintf( __( 'Message Code: %s - %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), (string) $message->code, (string) $message->description );
+				$messages[] = sprintf( __( 'Message Code: %s - %s', 'woocommerce-gateway-authorize-net-aim' ), (string) $message->code, (string) $message->description );
 			}
 		}
 
@@ -307,7 +307,7 @@ class WC_Authorize_Net_AIM_API_Response implements SV_WC_Payment_Gateway_API_Res
 
 			foreach ( $this->response_xml->transactionResponse->errors->error as $error ) {
 
-				$messages[] = sprintf( __( 'Error Code: %s - %s', WC_Authorize_Net_AIM::TEXT_DOMAIN ), (string) $error->errorCode, (string) $error->errorText );
+				$messages[] = sprintf( __( 'Error Code: %s - %s', 'woocommerce-gateway-authorize-net-aim' ), (string) $error->errorCode, (string) $error->errorText );
 			}
 		}
 

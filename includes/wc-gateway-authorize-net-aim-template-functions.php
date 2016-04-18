@@ -18,7 +18,7 @@
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Template
  * @author    SkyVerge
- * @copyright Copyright (c) 2011-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2011-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -56,7 +56,7 @@ if ( ! function_exists( 'woocommerce_authorize_net_aim_payment_fields' ) ) {
 
 		// for the test environment, display a notice and supply a default test payment method
 		if ( $gateway->is_test_environment() ) {
-			echo '<p>' . __( 'TEST MODE ENABLED', WC_Authorize_Net_AIM::TEXT_DOMAIN ) . '</p>';
+			echo '<p>' . __( 'TEST MODE ENABLED', 'woocommerce-gateway-authorize-net-aim' ) . '</p>';
 
 			$payment_method_defaults = array(
 				'account-number' => '4007000000027',
@@ -102,7 +102,7 @@ if ( ! function_exists( 'woocommerce_authorize_net_aim_echeck_payment_fields' ) 
 
 		// for the test environment, display a notice and supply a default test payment method
 		if ( $gateway->is_test_environment() ) {
-			echo '<p>' . __( 'TEST MODE ENABLED', WC_Authorize_Net_AIM::TEXT_DOMAIN ) . '</p>';
+			echo '<p>' . __( 'TEST MODE ENABLED', 'woocommerce-gateway-authorize-net-aim' ) . '</p>';
 
 			$payment_method_defaults = array(
 				'account-number' => '8675309',

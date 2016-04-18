@@ -1,10 +1,10 @@
 === WooCommerce Authorize.net AIM Gateway ===
 Author: woothemes, skyverge
 Tags: woocommerce
-Requires at least: 3.8
-Tested up to: 4.2.3
-Requires WooCommerce at least: 2.2
-Tested WooCommerce up to: 2.4
+Requires at least: 4.0
+Tested up to: 4.4.1
+Requires WooCommerce at least: 2.3.6
+Tested WooCommerce up to: 2.5.0
 
 Accept Credit Cards and eChecks via Authorize.net AIM in your WooCommerce store
 

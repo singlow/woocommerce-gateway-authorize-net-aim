@@ -18,7 +18,7 @@
  *
  * @package   SkyVerge/WooCommerce/Payment-Gateway/Classes
  * @author    SkyVerge
- * @copyright Copyright (c) 2013-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2013-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -87,6 +87,8 @@ class SV_WC_Payment_Gateway_Payment_Token {
 	 * @return string payment token string
 	 */
 	public function get_token() {
+
+		_deprecated_function( 'SV_WC_Payment_Gateway_Payment_Token::get_token()', '4.0.0', 'SV_WC_Payment_Gateway_Payment_Token::get_id()' );
 
 		return $this->get_id();
 	}

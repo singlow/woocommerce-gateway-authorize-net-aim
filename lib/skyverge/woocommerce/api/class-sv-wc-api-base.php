@@ -18,7 +18,7 @@
  *
  * @package   SkyVerge/WooCommerce/API
  * @author    SkyVerge
- * @copyright Copyright (c) 2013-2015, SkyVerge, Inc.
+ * @copyright Copyright (c) 2013-2016, SkyVerge, Inc.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
@@ -251,6 +251,29 @@ abstract class SV_WC_API_Base {
 			'body'    => $this->get_sanitized_response_body() ? $this->get_sanitized_response_body() : $this->get_raw_response_body(),
 		);
 
+		/**
+		 * API Base Request Performed Action.
+		 *
+		 * Fired when an API request is performed via this base class. Plugins can
+		 * hook into this to log request/response data.
+		 *
+		 * @since 2.2.0
+		 * @param array $request_data {
+		 *     @type string $method request method, e.g. POST
+		 *     @type string $uri request URI
+		 *     @type string $user-agent
+		 *     @type string $headers request headers
+		 *     @type string $body request body
+		 *     @type string $duration in seconds
+		 * }
+		 * @param array $response data {
+		 *     @type string $code response HTTP code
+		 *     @type string $message response message
+		 *     @type string $headers response HTTP headers
+		 *     @type string $body response body
+		 * }
+		 * @param \SV_WC_API_Base $this instance
+		 */
 		do_action( 'wc_' . $this->get_api_id() . '_api_request_performed', $request_data, $response_data, $this );
 	}
 
@@ -281,8 +304,22 @@ abstract class SV_WC_API_Base {
 	 * @return string
 	 */
 	protected function get_request_uri() {
+
 		// API base request URI + any request-specific path
-		return $this->request_uri . ( $this->get_request() ? $this->get_request()->get_path() : '' );
+		$uri = $this->request_uri . ( $this->get_request() ? $this->get_request()->get_path() : '' );
+
+		/**
+		 * Request URI Filter.
+		 *
+		 * Allow actors to filter the request URI. Note that child classes can override
+		 * this method, which means this filter may be invoked prior to the overridden
+		 * method.
+		 *
+		 * @since 4.1.0
+		 * @param string $uri current request URI
+		 * @param \SV_WC_API_Base class instance
+		 */
+		return apply_filters( 'wc_' . $this->get_api_id() . '_api_request_uri', $uri, $this );
 	}
 
 
@@ -314,9 +351,9 @@ abstract class SV_WC_API_Base {
 		 * child classes can override this method, which means this filter may
 		 * not be invoked, or may be invoked prior to the overridden method
 		 *
+		 * @since 2.2.0
 		 * @param array $args request arguments
 		 * @param \SV_WC_API_Base class instance
-		 * @since 2.2.0
 		 */
 		return apply_filters( 'wc_' . $this->get_api_id() . '_http_request_args', $args, $this );
 	}
