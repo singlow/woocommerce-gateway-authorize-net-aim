@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 if ( ! interface_exists( 'SV_WC_Payment_Gateway_API_Payment_Notification_Credit_Card_Response' ) ) :
 
@@ -55,7 +55,7 @@ interface SV_WC_Payment_Gateway_API_Payment_Notification_Credit_Card_Response ex
 
 
 	/**
-	 * Returns the card type, if available, i.e., 'visa', 'mc', etc
+	 * Returns the card type, if available, i.e., 'visa', 'mastercard', etc
 	 *
 	 * @since 2.2.0
 	 * @see SV_WC_Payment_Gateway_Helper::payment_type_to_name()

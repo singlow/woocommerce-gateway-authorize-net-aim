@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce Authorize.net AIM Gateway
+ * WooCommerce Authorize.Net AIM Gateway
  *
  * This source file is subject to the GNU General Public License v3.0
  * that is bundled with this package in the file license.txt.
@@ -12,8 +12,8 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade WooCommerce Authorize.net AIM Gateway to newer
- * versions in the future. If you wish to customize WooCommerce Authorize.net AIM Gateway for your
+ * Do not edit or add to this file if you wish to upgrade WooCommerce Authorize.Net AIM Gateway to newer
+ * versions in the future. If you wish to customize WooCommerce Authorize.Net AIM Gateway for your
  * needs please refer to http://docs.woothemes.com/document/authorize-net-aim/
  *
  * @package   WC-Gateway-Authorize-Net-AIM/API
@@ -22,13 +22,13 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 /**
- * Authorize.net AIM API Class
+ * Authorize.Net AIM API Class
  *
- * Handles sending/receiving/parsing of Authorize.net AIM XML, this is the main API
- * class responsible for communication with the Authorize.net AIM API
+ * Handles sending/receiving/parsing of Authorize.Net AIM XML, this is the main API
+ * class responsible for communication with the Authorize.Net AIM API
  *
  * @since 3.0
  */
@@ -36,7 +36,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/** the production endpoint */
-	const PRODUCTION_ENDPOINT = 'https://api.authorize.net/xml/v1/request.api';
+	const PRODUCTION_ENDPOINT = 'https://api2.authorize.net/xml/v1/request.api';
 
 	/** the test endpoint */
 	const TEST_ENDPOINT = 'https://apitest.authorize.net/xml/v1/request.api';
@@ -97,7 +97,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway_API::credit_card_charge()
 	 * @param WC_Order $order order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws Exception network timeouts, etc
 	 */
 	public function credit_card_charge( WC_Order $order ) {
@@ -126,7 +126,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * this request, because this is required for the subsequent capture request.
 	 *
 	 * Note: The authorization is valid only for a fixed amount of time, which
-	 * may vary by card issuer, but which is usually several days. Authorize.net imposes
+	 * may vary by card issuer, but which is usually several days. Authorize.Net imposes
 	 * its own maximum of 30 days after the date of the original authorization,
 	 * but most issuers are expected to have a validity period significantly
 	 * less than this.
@@ -134,7 +134,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway_API::credit_card_authorization()
 	 * @param WC_Order $order order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws Exception network timeouts, etc
 	 */
 	public function credit_card_authorization( WC_Order $order ) {
@@ -165,14 +165,14 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 *
 	 * Note: The authorization to be captured is valid only for a fixed amount
 	 * of time, which may vary by card issuer, but which is usually several
-	 * days. Authorize.net imposes its own maximum of 30 days after the date of the
+	 * days. Authorize.Net imposes its own maximum of 30 days after the date of the
 	 * original authorization, but most issuers are expected to have a validity
 	 * period significantly less than this.
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway_API::credit_card_capture()
 	 * @param WC_Order $order order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws Exception network timeouts, etc
 	 */
 	public function credit_card_capture( WC_Order $order ) {
@@ -194,7 +194,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 *
 	 * @since 3.0
 	 * @param WC_Order $order order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws Exception network timeouts, etc
 	 */
 	public function check_debit( WC_Order $order ) {
@@ -217,7 +217,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 *
 	 * @since 3.3.0
 	 * @param WC_Order $order the order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws SV_WC_API_Exception network timeouts, etc
 	 */
 	public function refund( WC_Order $order ) {
@@ -242,7 +242,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	 *
 	 * @since 3.3.0
 	 * @param WC_Order $order the order
-	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.net API response object
+	 * @return \WC_Authorize_Net_AIM_API_Response Authorize.Net API response object
 	 * @throws SV_WC_API_Exception network timeouts, etc
 	 */
 	public function void( WC_Order $order ) {
@@ -257,11 +257,11 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 	}
 
 
-	/** Tokenization methods - all no-op as Authorize.net AIM does not support tokenization ***************************/
+	/** Tokenization methods - all no-op as Authorize.Net AIM does not support tokenization ***************************/
 
 
 	/**
-	 * Returns false, as Authorize.net AIM does not support tokenization.
+	 * Returns false, as Authorize.Net AIM does not support tokenization.
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway_API::supports_get_tokenized_payment_methods()
@@ -274,7 +274,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/**
-	 * Returns false, as Authorize.net AIM does not support tokenization.
+	 * Returns false, as Authorize.Net AIM does not support tokenization.
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway_API::supports_remove_tokenized_payment_method()
@@ -287,7 +287,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/**
-	 * Authorize.net AIM does not support tokenization.
+	 * Authorize.Net AIM does not support tokenization.
 	 *
 	 * no-op
 	 *
@@ -300,7 +300,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/**
-	 * Authorize.net AIM does not support tokenization.
+	 * Authorize.Net AIM does not support tokenization.
 	 *
 	 * no-op
 	 *
@@ -314,7 +314,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 
 	/**
-	 * Authorize.net AIM does not support tokenization.
+	 * Authorize.Net AIM does not support tokenization.
 	 *
 	 * no-op
 	 *
@@ -364,7 +364,7 @@ class WC_Authorize_Net_AIM_API extends SV_WC_API_Base implements SV_WC_Payment_G
 
 		} elseif ( $this->get_response()->is_test_request() ) {
 
-			throw new SV_WC_API_Exception( __( 'Test request detected -- please disable test mode in your Authorize.net control panel and use a separate Authorize.net test account for testing.' ) );
+			throw new SV_WC_API_Exception( __( 'Test request detected -- please disable test mode in your Authorize.Net control panel and use a separate Authorize.Net test account for testing.' ) );
 		}
 	}
 

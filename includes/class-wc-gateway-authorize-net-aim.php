@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce Authorize.net AIM Gateway
+ * WooCommerce Authorize.Net AIM Gateway
  *
  * This source file is subject to the GNU General Public License v3.0
  * that is bundled with this package in the file license.txt.
@@ -12,8 +12,8 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade WooCommerce Authorize.net AIM Gateway to newer
- * versions in the future. If you wish to customize WooCommerce Authorize.net AIM Gateway for your
+ * Do not edit or add to this file if you wish to upgrade WooCommerce Authorize.Net AIM Gateway to newer
+ * versions in the future. If you wish to customize WooCommerce Authorize.Net AIM Gateway for your
  * needs please refer to http://docs.woothemes.com/document/authorize-net-aim/
  *
  * @package   WC-Gateway-Authorize-Net-AIM/Gateway
@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 /**
- * Authorize.net AIM Payment Gateway Parent Class
+ * Authorize.Net AIM Payment Gateway Parent Class
  *
  * Functionality which is shared between the credit card and echeck gateways
  *
@@ -45,15 +45,6 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 	/** @var string authorize.net test API transaction key */
 	public $test_api_transaction_key;
-
-	/** @var string determines how to process transactions, auth & capture or auth only */
-	public $transaction_type;
-
-	/** @var string require the card security code during checkout */
-	public $require_cvv;
-
-	/** @var string the location of the merchant's payment processor, determines what fields are required at checkout */
-	public $payment_processor_location;
 
 	/** @var WC_Authorize_Net_AIM_API instance */
 	protected $api;
@@ -77,35 +68,35 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 				'title'    => __( 'API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
 				'class'    => 'environment-field production-field',
-				'desc_tip' => __( 'Your Authorize.net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
+				'desc_tip' => __( 'Your Authorize.Net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'api_transaction_key' => array(
 				'title'    => __( 'API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
 				'class'    => 'environment-field production-field',
-				'desc_tip' => __( 'Your Authorize.net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
+				'desc_tip' => __( 'Your Authorize.Net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'test_api_login_id' => array(
 				'title'    => __( 'Test API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'text',
 				'class'    => 'environment-field test-field',
-				'desc_tip' => __( 'Your test Authorize.net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
+				'desc_tip' => __( 'Your test Authorize.Net API Login ID', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 
 			'test_api_transaction_key' => array(
 				'title'    => __( 'Test API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 				'type'     => 'password',
 				'class'    => 'environment-field test-field',
-				'desc_tip' => __( 'Your test Authorize.net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
+				'desc_tip' => __( 'Your test Authorize.Net API Transaction Key', 'woocommerce-gateway-authorize-net-aim' ),
 			),
 		);
 	}
 
 
 	/**
-	 * Add any Authorize.net AIM specific transaction information as
+	 * Add any Authorize.Net AIM specific transaction information as
 	 * class members of WC_Order instance.  Added members can include:
 	 *
 	 * auth_net_aim_merchant_defined_fields - custom fields added to the transaction in format array( name => value )
@@ -119,12 +110,6 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 		// add common order members
 		$order = parent::get_order( $order_id );
-
-		// set card type
-		if ( $this->is_credit_card_gateway() ) {
-
-			$order->payment->card_type = SV_WC_Payment_Gateway_Helper::card_type_from_account_number( $order->payment->account_number );
-		}
 
 		/**
 		 * Filter the order description
@@ -142,7 +127,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 	/**
 	 * Returns true if the gateway is properly configured to perform transactions.
-	 * Authorize.net AIM requires: API Login ID & API Transaction Key
+	 * Authorize.Net AIM requires: API Login ID & API Transaction Key
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway::is_configured()
@@ -188,6 +173,9 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 		// API response
 		require_once( $plugin_path . '/includes/api/class-wc-authorize-net-aim-api-response.php' );
 
+		// API response user message helper
+		require_once( $plugin_path . '/includes/api/class-wc-authorize-net-aim-api-response-message-helper.php' );
+
 		return $this->api = new WC_Authorize_Net_AIM_API( $this->get_id(), $this->get_environment(), $this->get_api_login_id(), $this->get_api_transaction_key() );
 	}
 
@@ -227,7 +215,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 
 	/**
-	 * Authorize.net AIM does not support customer IDs
+	 * Authorize.Net AIM does not support customer IDs
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway::get_customer_id_user_meta_name()
@@ -241,7 +229,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 
 	/**
-	 * Authorize.net AIM does not support customer IDs
+	 * Authorize.Net AIM does not support customer IDs
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway::get_guest_customer_id()
@@ -255,7 +243,7 @@ class WC_Gateway_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Direct {
 
 
 	/**
-	 * Authorize.net AIM does not support customer IDs
+	 * Authorize.Net AIM does not support customer IDs
 	 *
 	 * @since 3.0
 	 * @see SV_WC_Payment_Gateway::get_customer_id()

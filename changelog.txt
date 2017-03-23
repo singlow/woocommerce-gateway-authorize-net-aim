@@ -1,4 +1,42 @@
-*** WooCommerce Authorize.net AIM Gateway Changelog ***
+*** WooCommerce Authorize.Net AIM Gateway Changelog ***
+
+2017.01.11 - version 3.10.1
+ * Fix - Ensure Curaçao country code is properly formatted to avoid invalid country errors
+
+2016.11.09 - version 3.10.0
+ * Feature - Orders with only virtual items can now force a charge instead of authorization
+ * Feature - Enhanced payment form is now mobile-friendly (well, friendlier!) with `tel` type inputs
+ * Tweak - Update Mastercard payment icon and add BIN 2 series support
+ * Fix - Fixes transaction failures on orders with $0 fees
+ * Misc - Update SkyVerge plugin framework to 4.5
+
+2016.08.31 - version 3.9.2
+ * Fix - Prevent errors for certain transactions with empty code values
+
+2016.08.02 - version 3.9.1
+ * Fix - Add Accept.js documentation link
+ * Tweak - Correctly capitalize "Authorize.Net"
+
+2016.07.27 - version 3.9.0
+ * Feature - Add Accept.js support for reduced PCI compliance scope
+
+2016.07.20 - version 3.8.1
+ * Fix - Fix API errors with emulation gateway in production mode
+ * Misc - WordPress 4.6 compatibility
+
+2016.06.28 - version 3.8.0
+ * Feature - Simplified responsive payment form with new retina payment method icons and live inline validation
+ * Tweak - Improved the accuracy of detailed decline messages shown to customers during checkout
+ * Feature - Update legacy gateway for improved support with Authorize.net emulators
+
+2016.06.02 - version 3.7.0
+ * Misc - Added support for WooCommerce 2.6
+ * Misc - Removed support for WooCommerce 2.3
+
+2016.04.20 - version 3.6.0
+ * Tweak - Uses new Akamai API endpoints in production
+ * Fix - Improved handling for invalid UTF-8 characters in line item titles and descriptions
+ * Misc - Update the payment gateway framework to v4.3.0
 
 2016.01.26 - version 3.5.1
  * Fix - Fix a PHP warning that could be logged during payment processing

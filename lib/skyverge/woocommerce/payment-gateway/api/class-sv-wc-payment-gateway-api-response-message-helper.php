@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 if ( ! class_exists( 'SV_WC_Payment_Gateway_API_Response_Message_Helper' ) ) :
 
@@ -69,7 +69,9 @@ class SV_WC_Payment_Gateway_API_Response_Message_Helper {
 			$messages[] = $this->get_user_message( $message_id );
 		}
 
-		return implode( ' ', $messages );
+		$messages = implode( ' ', $messages );
+
+		return trim( $messages );
 	}
 
 

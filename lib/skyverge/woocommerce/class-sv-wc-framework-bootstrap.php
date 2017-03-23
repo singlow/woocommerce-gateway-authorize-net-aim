@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 if ( ! class_exists( 'SV_WC_Framework_Bootstrap' ) ) :
 
@@ -259,29 +259,41 @@ class SV_WC_Framework_Bootstrap {
 		// must update plugin notice
 		if ( ! empty( $this->incompatible_framework_plugins ) ) {
 
-			printf( '<div class="error"><p>%s</p><ul>', count( $this->incompatible_framework_plugins ) > 1 ? esc_html__( 'The following plugins are inactive because they are out of date and require a newer version to function properly:', 'woocommerce-plugin-framework' ) : esc_html__( 'The following plugin is inactive because it is out of date and requires a newer version to function properly:', 'woocommerce-plugin-framework' ) );
+			$plugin_count = count( $this->incompatible_framework_plugins );
 
-			foreach ( $this->incompatible_framework_plugins as $plugin ) {
-				printf( '<li>%s</li>', $plugin['plugin_name'] );
-			}
+			echo '<div class="error">';
 
-			echo '</ul>';
-			echo '<p>' .
-				sprintf(
-					count( $this->incompatible_framework_plugins ) > 1
-						/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag, %3$s - <em> tag, %4$s - </em> tag, %5$s - <a> tag, %6$s - </a> tag */
-						? esc_html__( 'To reactivate these plugins, please %1$supdate now (recommended)%2$s %3$sor%4$s %5$sdeactivate the following%6$s:', 'woocommerce-plugin-framework' )
-						/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag, %3$s - <em> tag, %4$s - </em> tag, %5$s - <a> tag, %6$s - </a> tag */
-						: esc_html__( 'To reactivate this plugin, please %1$supdate now (recommended)%2$s %3$sor%4$s %5$sdeactivate the following%6$s:', 'woocommerce-plugin-framework' ),
-					'<a href="' . admin_url( 'update-core.php' ) . '">', '</a>',
-					'<em>', '</em>',
-					'<a href="' . admin_url( 'plugins.php?sv_wc_framework_deactivate_newer=yes' ) . '">', '</a>'
-				) . '</p>';
-			echo '<ul>';
-			foreach ( $this->active_plugins as $plugin ) {
-				printf( '<li>%s</li>', $plugin['plugin_name'] );
-			}
-			echo '</ul>';
+				// describe the problem
+				echo '<p>';
+					echo esc_html( _n( 'The following plugin is disabled because it is out of date and incompatible with newer plugins on your site:', 'The following plugins are disabled because they are out of date and incompatible with newer plugins on your site:', $plugin_count, 'woocommerce-plugin-framework' ) );
+				echo '</p>';
+
+				// add a incompatible plugin list
+				echo '<ul>';
+					foreach ( $this->incompatible_framework_plugins as $plugin ) {
+						printf( '<li>%s</li>', $plugin['plugin_name'] );
+					}
+				echo '</ul>';
+
+				// describe the way to fix it
+				echo '<p>';
+					printf(
+						/** translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag, %3$s - <em> tag, %4$s - </em> tag, %5$s - <a> tag, %6$s - </a> tag, %7$s - <a> tag, %8$s - </a> tag */
+						esc_html( _n( 'To resolve this, please %1$supdate%2$s (recommended) %3$sor%4$s %5$sdeactivate%6$s the above plugin, or %7$sdeactivate the following%8$s:', 'To resolve this, please %1$supdate%2$s (recommended) %3$sor%4$s %5$sdeactivate%6$s the above plugins, or %7$sdeactivate the following%8$s:', $plugin_count, 'woocommerce-plugin-framework' ) ),
+						'<a href="' . esc_url( admin_url( 'update-core.php' ) ) . '">', '</a>',
+						'<em>', '</em>',
+						'<a href="' . esc_url( admin_url( 'update-core.php' ) ) . '">', '</a>',
+						'<a href="' . esc_url( admin_url( 'plugins.php?sv_wc_framework_deactivate_newer=yes' ) ) . '">', '</a>'
+					);
+				echo '</p>';
+
+				// add the list of active plugins
+				echo '<ul>';
+					foreach ( $this->active_plugins as $plugin ) {
+						printf( '<li>%s</li>', $plugin['plugin_name'] );
+					}
+				echo '</ul>';
+
 			echo '</div>';
 		}
 
@@ -297,7 +309,7 @@ class SV_WC_Framework_Bootstrap {
 			}
 
 			/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
-			echo '</ul><p>' . printf( esc_html__( 'Please %1$supdate WooCommerce%2$s', 'woocommerce-plugin-framework' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '&nbsp;&raquo;</a>' ) . '</p></div>';
+			echo '</ul><p>' . sprintf( esc_html__( 'Please %1$supdate WooCommerce%2$s', 'woocommerce-plugin-framework' ), '<a href="' . admin_url( 'update-core.php' ) . '">', '&nbsp;&raquo;</a>' ) . '</p></div>';
 		}
 
 		// must update WP notice

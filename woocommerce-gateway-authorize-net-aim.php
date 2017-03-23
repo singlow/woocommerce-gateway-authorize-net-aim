@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: WooCommerce Authorize.net AIM Gateway
+ * Plugin Name: WooCommerce Authorize.Net AIM Gateway
  * Plugin URI: http://www.woothemes.com/products/authorize-net-aim/
- * Description: Accept Credit Cards and eChecks via Authorize.net AIM in your WooCommerce store
+ * Description: Accept Credit Cards and eChecks via Authorize.Net AIM in your WooCommerce store
  * Author: WooThemes / SkyVerge
  * Author URI: http://www.woothemes.com
- * Version: 3.5.1
+ * Version: 3.10.1
  * Text Domain: woocommerce-gateway-authorize-net-aim
  * Domain Path: /i18n/languages/
  *
@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 // Required functions
 if ( ! function_exists( 'woothemes_queue_update' ) ) {
@@ -41,16 +41,21 @@ if ( ! class_exists( 'SV_WC_Framework_Bootstrap' ) ) {
 	require_once( plugin_dir_path( __FILE__ ) . 'lib/skyverge/woocommerce/class-sv-wc-framework-bootstrap.php' );
 }
 
-SV_WC_Framework_Bootstrap::instance()->register_plugin( '4.2.1', __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array( 'is_payment_gateway' => true, 'minimum_wc_version' => '2.3.6', 'backwards_compatible' => '4.2.0' ) );
+SV_WC_Framework_Bootstrap::instance()->register_plugin( '4.5.2', __( 'WooCommerce Authorize.Net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' ), __FILE__, 'init_woocommerce_gateway_authorize_net_aim', array(
+	'is_payment_gateway'   => true,
+	'minimum_wc_version'   => '2.4.13',
+	'minimum_wp_version'   => '4.1',
+	'backwards_compatible' => '4.4.0',
+) );
 
 function init_woocommerce_gateway_authorize_net_aim() {
 
 /**
- * # WooCommerce Authorize.net AIM Gateway Main Plugin Class
+ * # WooCommerce Authorize.Net AIM Gateway Main Plugin Class
  *
  * ## Plugin Overview
  *
- * This plugin adds Authorize.net AIM as a payment gateway.  This class handles all the
+ * This plugin adds Authorize.Net AIM as a payment gateway.  This class handles all the
  * non-gateway tasks such as verifying dependencies are met, loading the text
  * domain, etc.
  *
@@ -63,7 +68,7 @@ function init_woocommerce_gateway_authorize_net_aim() {
  * ## Admin Considerations
  *
  * + An additional plugin action link is added that allows the admin to activate the legacy SIM gateway for use
- * with non-Authorize.net processors (emulation)
+ * with non-Authorize.Net processors (emulation)
  *
  * + A 'Capture Charge' order action link is added that allows the admin to capture a previously authorized charge for
  * an order
@@ -87,17 +92,17 @@ function init_woocommerce_gateway_authorize_net_aim() {
  * ### Credit Card Order Meta
  *
  * + `_wc_authorize_net_aim_environment` - the environment the transaction was created in, one of 'test' or 'production'
- * + `_wc_authorize_net_aim_trans_id` - the credit card transaction ID returned by Authorize.net
+ * + `_wc_authorize_net_aim_trans_id` - the credit card transaction ID returned by Authorize.Net
  * + `_wc_authorize_net_aim_trans_date` - the credit card transaction date
  * + `_wc_authorize_net_aim_account_four` - the last four digits of the card used for the order
  * + `_wc_authorize_net_aim_card_type` - the card type used for the transaction, if known
  * + `_wc_authorize_net_aim_card_expiry_date` - the expiration date for the card used for the order
- * + `_wc_authorize_net_aim_authorization_code` - the authorization code returned by Authorize.net
+ * + `_wc_authorize_net_aim_authorization_code` - the authorization code returned by Authorize.Net
  * + `_wc_authorize_net_aim_charge_captured` - indicates if the transaction was captured, either `yes` or `no`
  *
  * ### eCheck Order Meta
  * + `_wc_authorize_net_aim_echeck_environment` - the environment the transaction was created in, one of 'test' or 'production'
- * + `_wc_authorize_net_aim_echeck_trans_id` - the credit card transaction ID returned by Authorize.net
+ * + `_wc_authorize_net_aim_echeck_trans_id` - the credit card transaction ID returned by Authorize.Net
  * + `_wc_authorize_net_aim_echeck_trans_date` - the credit card transaction date
  * + `_wc_authorize_net_aim_echeck_account_four` - the last four digits of the card used for the order
  * + `_wc_authorize_net_aim_echeck_account_type` - the bank account type used for the transaction, if known, either `checking` or `savings`
@@ -108,7 +113,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/** string version number */
-	const VERSION = '3.5.1';
+	const VERSION = '3.10.1';
 
 	/** @var WC_Authorize_Net_AIM single instance of this plugin */
 	protected static $instance;
@@ -116,20 +121,23 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	/** string the plugin id */
 	const PLUGIN_ID = 'authorize_net_aim';
 
-	/** string plugin text domain, DEPRECATED as of 3.5.0 */
-	const TEXT_DOMAIN = 'woocommerce-gateway-authorize-net-aim';
-
-	/** string the gateway class name */
+	/** string credit card gateway class name */
 	const CREDIT_CARD_GATEWAY_CLASS_NAME = 'WC_Gateway_Authorize_Net_AIM_Credit_Card';
 
-	/** string the gateway id */
+	/** string credit card gateway id */
 	const CREDIT_CARD_GATEWAY_ID = 'authorize_net_aim';
 
-	/** string the gateway class name */
+	/** string eCheck gateway class name */
 	const ECHECK_GATEWAY_CLASS_NAME = 'WC_Gateway_Authorize_Net_AIM_eCheck';
 
-	/** string the gateway id */
+	/** string eCheck gateway id */
 	const ECHECK_GATEWAY_ID = 'authorize_net_aim_echeck';
+
+	/** string emulation gateway class name */
+	const EMULATION_GATEWAY_CLASS_NAME = 'WC_Gateway_Authorize_Net_AIM_Emulation';
+
+	/** string emulation gateway ID */
+	const EMULATION_GATEWAY_ID = 'authorize_net_aim_emulation';
 
 
 	/**
@@ -143,28 +151,22 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 			self::PLUGIN_ID,
 			self::VERSION,
 			array(
-				'gateways' => array(
-					self::CREDIT_CARD_GATEWAY_ID => self::CREDIT_CARD_GATEWAY_CLASS_NAME,
-					self::ECHECK_GATEWAY_ID      => self::ECHECK_GATEWAY_CLASS_NAME,
-				),
-				'dependencies'       => array( 'SimpleXML', 'xmlwriter', 'dom' ),
-				'require_ssl'        => true,
-				'supports'           => array(
+				'gateways'     => $this->get_enabled_gateways(),
+				'dependencies' => array( 'SimpleXML', 'xmlwriter', 'dom' ),
+				'require_ssl'  => true,
+				'supports'     => array(
 					self::FEATURE_CAPTURE_CHARGE,
 				),
 			)
 		);
 
-		// Load gateway files after woocommerce is loaded
+		// load gateway files
 		add_action( 'sv_wc_framework_plugins_loaded', array( $this, 'includes' ), 11 );
-
-		// load templates
-		add_action( 'init', array( $this, 'include_template_functions' ), 25 );
 
 		if ( is_admin() && ! is_ajax() ) {
 
-			// handle activating/deactivating legacy SIM gateway
-			add_action( 'admin_action_wc_authorize_net_toggle_sim', array( $this, 'maybe_toggle_sim_gateway' ) );
+			// handle activating/deactivating emulation gateway
+			add_action( 'admin_action_wc_authorize_net_aim_emulation', array( $this, 'toggle_emulation' ) );
 		}
 	}
 
@@ -206,43 +208,39 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 			add_filter( 'woocommerce_get_country_locale', array( $this, 'require_billing_fields' ), 100 );
 		}
 
-		// load the legacy SIM gateway if active
-		if ( $this->is_legacy_sim_gateway_active() ) {
+		// load the emulation gateway if enabled
+		if ( $this->is_emulation_enabled() ) {
 
-			require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-sim.php' );
-			add_filter( 'woocommerce_payment_gateways', array( $this, 'load_legacy_sim_gateway' ) );
+			require_once( $plugin_path . '/includes/class-wc-gateway-authorize-net-aim-emulation.php' );
 		}
 	}
 
 
 	/**
-	 * Loads the legacy SIM gateway
+	 * Return the enabled gateways, AIM credit card/eCheck by default, with
+	 * AIM emulation included when enabled
 	 *
-	 * @since 3.0
-	 * @param array $gateways
+	 * @since 3.8.0
 	 * @return array
 	 */
-	public function load_legacy_sim_gateway( $gateways ) {
+	protected function get_enabled_gateways() {
 
-		$gateways[] = 'WC_Gateway_Authorize_Net_SIM';
+		// default gateways
+		$gateways = array(
+			self::CREDIT_CARD_GATEWAY_ID => self::CREDIT_CARD_GATEWAY_CLASS_NAME,
+			self::ECHECK_GATEWAY_ID      => self::ECHECK_GATEWAY_CLASS_NAME,
+		);
+
+		// add emulation gateway if enabled
+		if ( $this->is_emulation_enabled() ) {
+			$gateways[ self::EMULATION_GATEWAY_ID ] = self::EMULATION_GATEWAY_CLASS_NAME;
+		}
 
 		return $gateways;
 	}
 
 
 	/** Frontend methods ******************************************************/
-
-
-	/**
-	 * Function used to init any gateway template functions,
-	 * making them pluggable by plugins and themes.
-	 *
-	 * @since 3.0
-	 */
-	public function include_template_functions() {
-
-		require_once( $this->get_plugin_path() . '/includes/wc-gateway-authorize-net-aim-template-functions.php' );
-	}
 
 
 	/**
@@ -300,45 +298,22 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 * @return array associative array of plugin action links
 	 */
 	public function plugin_action_links( $actions ) {
-		global $status, $page, $s;
 
 		// get the standard action links
 		$actions = parent::plugin_action_links( $actions );
 
-		// add an action to enabled the legacy SIM gateway
-		if ( $this->is_legacy_sim_gateway_active() ) {
-			$actions['deactivate_sim'] = sprintf(
-				'<a href="%s" title="%s">%s</a>',
-				esc_url( wp_nonce_url(
-					add_query_arg(
-						array(
-							'action'        => 'wc_authorize_net_toggle_sim',
-							'gateway'       => 'deactivate',
-							'plugin_status' => $status,
-							'paged'         => $page,
-							's'             => $s ),
-						'admin.php' ),
-					$this->get_file() ) ),
-				esc_attr__( 'Deactivate SIM gateway', 'woocommerce-gateway-authorize-net-aim' ),
-				__( 'Deactivate SIM gateway', 'woocommerce-gateway-authorize-net-aim' )
-			);
-		} else {
-			$actions['activate_sim'] = sprintf(
-				'<a href="%s" title="%s">%s</a>',
-				esc_url( wp_nonce_url(
-					add_query_arg(
-						array(
-							'action'        => 'wc_authorize_net_toggle_sim',
-							'gateway'       => 'activate',
-							'plugin_status' => $status,
-							'paged'         => $page,
-							's'             => $s ),
-						'admin.php' ),
-					$this->get_file() ) ),
-				esc_attr__( 'Activate SIM gateway', 'woocommerce-gateway-authorize-net-aim' ),
-				__( 'Activate SIM gateway', 'woocommerce-gateway-authorize-net-aim' )
-			);
-		}
+		// enable/disable emulation link
+		$params = array(
+			'action' => 'wc_authorize_net_aim_emulation',
+			'toggle' => $this->is_emulation_enabled() ? 'disable' : 'enable'
+		);
+
+		$url = wp_nonce_url( add_query_arg( $params, 'admin.php' ), $this->get_file() );
+		$title  = $this->is_emulation_enabled()
+			? esc_html__( 'Disable Emulation Gateway', 'woocommerce-gateway-authorize-net-aim' )
+			: esc_html__( 'Enable Emulation Gateway', 'woocommerce-gateway-authorize-net-aim' );
+
+		$actions['emulation'] = sprintf( '<a href="%1$s" title="%2$s">%2$s</a>', esc_url( $url ), $title );
 
 		return $actions;
 	}
@@ -355,45 +330,53 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 */
 	public function get_settings_link( $gateway_id = null ) {
 
+		switch ( $gateway_id ) {
+
+			case self::EMULATION_GATEWAY_ID:
+				$label = __( 'Configure Emulator', 'woocommerce-gateway-authorize-net-aim' );
+			break;
+
+			case self::ECHECK_GATEWAY_ID:
+				$label = __( 'Configure eChecks', 'woocommerce-gateway-authorize-net-aim' );
+			break;
+
+			default:
+				$label = __( 'Configure Credit Cards', 'woocommerce-gateway-authorize-net-aim' );
+		}
+
 		return sprintf( '<a href="%s">%s</a>',
 			$this->get_settings_url( $gateway_id ),
-			self::CREDIT_CARD_GATEWAY_ID === $gateway_id ? __( 'Configure Credit Cards', 'woocommerce-gateway-authorize-net-aim' ) : __( 'Configure eChecks', 'woocommerce-gateway-authorize-net-aim' )
+			$label
 		);
 	}
 
 
 	/**
-	 * Handles activating/deactivating the legacy SIM gateway
+	 * Handles enabling/disabling the emulation gateway
 	 *
-	 * @since 3.0
+	 * @since 3.8.0
 	 */
-	public function maybe_toggle_sim_gateway() {
-
-		// Plugins page arguments
-		$plugin_status = isset( $_GET['plugin_status'] ) ? $_GET['plugin_status'] : '';
-		$page          = isset( $_GET['paged'] ) ? $_GET['paged'] : '';
-		$s             = isset( $_GET['s'] ) ? $_GET['s'] : '';
-
-		// the gateway action
-		$gateway = isset( $_GET['gateway'] ) ? $_GET['gateway'] : '';
-
-		// get the base return url
-		$return_url = admin_url( 'plugins.php?plugin_status=' . $plugin_status . '&paged=' . $page . '&s=' . $s );
+	public function toggle_emulation() {
 
 		// security check
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->get_file() ) ) {
-			wp_redirect( $return_url );
+		if ( ! wp_verify_nonce( $_GET['_wpnonce'], $this->get_file() ) || ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_safe_redirect( wp_get_referer() );
 			exit;
 		}
 
-		// either activate/deactivate
-		if ( 'activate' == $gateway || 'deactivate' == $gateway ) {
-			update_option( 'wc_authorize_net_aim_sim_active', 'activate' == $gateway ? true : false );
-			$return_url = add_query_arg( array( 'wc_authorize_net_aim_sim_active' => $gateway ), $return_url );
+		// sanity check
+		if ( empty( $_GET['toggle'] ) || ! in_array( $_GET['toggle'], array( 'enable', 'disable' ), true ) ) {
+			wp_safe_redirect( wp_get_referer() );
+			exit;
 		}
 
+		// enable/disable the emulation gateway
+		update_option( 'wc_authorize_net_aim_emulation_enabled', 'enable' === $_GET['toggle'] );
+
+		$return_url = add_query_arg( array( 'wc_authorize_net_aim_emulation' => $_GET['toggle'] ), 'plugins.php' );
+
 		// back to whence we came
-		wp_redirect( esc_url_raw( $return_url ) );
+		wp_safe_redirect( $return_url );
 		exit;
 	}
 
@@ -409,27 +392,72 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 		parent::add_admin_notices();
 
-		// legacy gateway notice
-		if ( ! empty( $_GET['wc_authorize_net_aim_sim_active'] ) ) {
-			if ( 'activate' == $_GET['wc_authorize_net_aim_sim_active'] ) {
-				$message = __( "Legacy Authorize.net SIM gateway is now active.", 'woocommerce-gateway-authorize-net-aim' );
-			} else {
-				$message = __( "Legacy Authorize.net SIM gateway is now inactive.", 'woocommerce-gateway-authorize-net-aim' );
+		$credit_card_gateway = $this->get_gateway( self::CREDIT_CARD_GATEWAY_ID );
+
+		if ( $credit_card_gateway->is_enabled() && $credit_card_gateway->is_accept_js_enabled() && isset( $_GET['page'] ) && 'wc-settings' === $_GET['page'] ) {
+
+			$message = '';
+
+			if ( ! $credit_card_gateway->get_client_key() ) {
+				$message = sprintf( __( "%s: A valid Client Key is required to use Accept.js at checkout.", 'woocommerce-gateway-authorize-net-aim' ), '<strong>' . $this->get_plugin_name() . '</strong>' );
+			} elseif ( ! SV_WC_Plugin_Compatibility::wc_checkout_is_https() ) {
+				$message = sprintf( __( "%s: SSL is required to use Accept.js at checkout.", 'woocommerce-gateway-authorize-net-aim' ), '<strong>' . $this->get_plugin_name() . '</strong>' );
 			}
-			$this->get_admin_notice_handler()->add_admin_notice( $message, 'authorize-net-sim-status', array( 'dismissible' => false, 'notice_class' => 'updated' ) );
+
+			if ( $message ) {
+				$this->get_admin_notice_handler()->add_admin_notice( $message, 'accept-js-status', array(
+					'dismissible'  => false,
+					'notice_class' => 'error',
+				) );
+			}
+		}
+
+		// emulation enabled/disabled notice
+		if ( ! empty( $_GET['wc_authorize_net_aim_emulation'] ) ) {
+
+			$message = ( 'enable' === $_GET['wc_authorize_net_aim_emulation'] )
+				? __( 'Authorize.Net AIM Emulation Gateway is now enabled.', 'woocommerce-gateway-authorize-net-aim' )
+				: __( 'Authorize.Net AIM Emulation Gateway is now disabled.', 'woocommerce-gateway-authorize-net-aim');
+
+			$this->get_admin_notice_handler()->add_admin_notice( $message, 'emulation-status', array( 'dismissible' => false, ) );
 		}
 	}
 
 
 	/**
-	 * Returns true if the legacy SIM gateway is active
+	 * Returns true if emulation is enabled
 	 *
-	 * @since 3.0
+	 * @since 3.8.0
 	 * @return bool
 	 */
-	private function is_legacy_sim_gateway_active() {
+	private function is_emulation_enabled() {
 
-		return get_option( 'wc_authorize_net_aim_sim_active' );
+		return (bool) get_option( 'wc_authorize_net_aim_emulation_enabled' );
+	}
+
+
+	/**
+	 * Return the gateway settings for the given gateway ID. Overridden to mark
+	 * the emulation gateway as inheriting settings (even though it does not) to
+	 * prevent the credit card/eCheck gateways from attempting to inherit it's settings
+	 *
+	 * TODO: this can be removed once is https://github.com/skyverge/wc-plugin-framework/issues/157
+	 * is merged and it's FW version required {MR 2016-06-28}
+	 *
+	 * @since 3.8.0
+	 * @see SV_WC_Payment_Gateway_Plugin::get_gateway_settings()
+	 * @param string $gateway_id gateway identifier
+	 * @return array settings array
+	 */
+	public function get_gateway_settings( $gateway_id ) {
+
+		$settings = parent::get_gateway_settings( $gateway_id );
+
+		if ( $gateway_id === self::EMULATION_GATEWAY_ID ) {
+			$settings['inherit_settings'] = 'yes';
+		}
+
+		return $settings;
 	}
 
 
@@ -437,7 +465,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 	/**
-	 * Main Authorize.net AIM Instance, ensures only one instance is/can be loaded
+	 * Main Authorize.Net AIM Instance, ensures only one instance is/can be loaded
 	 *
 	 * @since 3.3.0
 	 * @see wc_authorize_net_aim()
@@ -459,7 +487,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 	 * @return string the plugin name
 	 */
 	public function get_plugin_name() {
-		return __( 'WooCommerce Authorize.net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' );
+		return __( 'WooCommerce Authorize.Net AIM Gateway', 'woocommerce-gateway-authorize-net-aim' );
 	}
 
 
@@ -587,6 +615,73 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 				update_option( 'woocommerce_authorize_net_sim_settings', $old_settings );
 			}
 		}
+
+		// upgrade to 3.8.0
+		if ( version_compare( $installed_version, '3.8.0', '<' ) ) {
+
+			// update emulation gateway enabled option
+			if ( get_option( 'wc_authorize_net_aim_sim_active', false ) ) {
+
+				update_option( 'wc_authorize_net_aim_emulation_enabled', true );
+				delete_option( 'wc_authorize_net_aim_sim_active' );
+			}
+
+			// migrate settings from legacy emulation gateway
+			if ( $old_settings = get_option( 'woocommerce_authorize_net_sim_settings' ) ) {
+
+				// base settings
+				$new_settings = array(
+					'enabled'                  => isset( $old_settings['enabled'] ) ? $old_settings['enabled'] : 'no',
+					'title'                    => isset( $old_settings['title'] ) ? $old_settings['title'] : 'Credit Card',
+					'description'              => isset( $old_settings['description'] ) ? $old_settings['description'] : 'Pay securely using your credit card.',
+					'enable_csc'               => isset( $old_settings['cvv'] ) ? $old_settings['cvv'] : 'yes',
+					'transaction_type'         => isset( $old_settings['salemethod'] ) && 'AUTH_ONLY' === $old_settings['salemethod'] ? 'authorization' : 'charge',
+					'environment'              => isset( $old_settings['gatewayurl'] ) && 'https://test.authorize.net/gateway/transact.dll' === $old_settings['gatewayurl'] ? 'test' : 'production',
+					'debug_mode'               => isset( $old_settings['debugon'] ) && 'yes' === $old_settings['debugon'] ? 'log' : 'off',
+					'gateway_url'              => isset( $old_settings['gatewayurl'] ) ? $old_settings['gatewayurl'] : 'https://secure2.authorize.net/gateway/transact.dll',
+					'api_login_id'             => isset( $old_settings['apilogin'] ) ? $old_settings['apilogin'] : '',
+					'api_transaction_key'      => isset( $old_settings['transkey'] ) ? $old_settings['transkey'] : '',
+					'test_gateway_url'         => isset( $old_settings['gatewayurl'] ) && 'https://test.authorize.net/gateway/transact.dll' === $old_settings['gatewayurl'] ? $old_settings['gatewayurl'] : 'https://test.authorize.net/gateway/transact.dll',
+					'test_api_login_id'        => isset( $old_settings['gatewayurl'] ) && 'https://test.authorize.net/gateway/transact.dll' === $old_settings['gatewayurl'] ? $old_settings['apilogin'] : '',
+					'test_api_transaction_key' => isset( $old_settings['gatewayurl'] ) && 'https://test.authorize.net/gateway/transact.dll' === $old_settings['gatewayurl'] ? $old_settings['transkey'] : '',
+				);
+
+				// card types
+				if ( isset( $old_settings['cardtypes'] ) && is_array( $old_settings['cardtypes'] ) ) {
+
+					$new_settings['card_types'] = array();
+
+					// map old to new
+					foreach ( $old_settings['cardtypes'] as $card_type ) {
+
+						switch ( $card_type ) {
+
+							case 'MasterCard':
+								$new_settings['card_types'][] = 'MC';
+								break;
+
+							case 'Visa':
+								$new_settings['card_types'][] = 'VISA';
+								break;
+
+							case 'Discover':
+								$new_settings['card_types'][] = 'DISC';
+								break;
+
+							case 'American Express':
+								$new_settings['card_types'][] = 'AMEX';
+								break;
+						}
+					}
+				}
+
+				// set new settings
+				update_option( 'woocommerce_authorize_net_aim_emulation_settings', $new_settings );
+
+				// remove old settings
+				delete_option( 'woocommerce_authorize_net_sim_settings' );
+			}
+		}
 	}
 
 
@@ -594,7 +689,7 @@ class WC_Authorize_Net_AIM extends SV_WC_Payment_Gateway_Plugin {
 
 
 /**
- * Returns the One True Instance of Authorize.net AIM
+ * Returns the One True Instance of Authorize.Net AIM
  *
  * @since 3.3.0
  * @return WC_Authorize_Net_AIM

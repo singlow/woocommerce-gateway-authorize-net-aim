@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) or exit;
 
 if ( ! class_exists( 'SV_WC_Payment_Gateway_Payment_Form' ) ) :
 
@@ -49,7 +49,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 	/**
 	 * Setup Class
 	 *
-	 * @param \SV_WC_Payment_Gateway $gateway gateway for form
+	 * @param \SV_WC_Payment_Gateway|\SV_WC_Payment_Gateway_Direct $gateway gateway for form
 	 * @since 4.0.0
 	 */
 	public function __construct( $gateway ) {
@@ -113,7 +113,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 
 		if ( $this->tokenization_allowed() && is_user_logged_in() ) {
 
-			foreach ( $this->get_gateway()->get_payment_tokens( get_current_user_id() ) as $token ) {
+			foreach ( $this->get_gateway()->get_payment_tokens_handler()->get_tokens( get_current_user_id() ) as $token ) {
 
 				// some gateways return all tokens for each gateway, so ensure the token type matches the gateway type
 				if ( ( $this->get_gateway()->is_credit_card_gateway() && $token->is_check() ) || ( $this->get_gateway()->is_echeck_gateway() && $token->is_credit_card() ) ) {
@@ -138,7 +138,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 	 * Return the gateway for this form
 	 *
 	 * @since 4.0.0
-	 * @return SV_WC_Payment_Gateway
+	 * @return \SV_WC_Payment_Gateway|\SV_WC_Payment_Gateway_Direct
 	 */
 	public function get_gateway() {
 		return $this->gateway;
@@ -201,7 +201,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 	 */
 	public function tokenization_forced() {
 
-		$tokenization_forced = $this->get_gateway()->is_direct_gateway() && $this->get_gateway()->tokenization_forced();
+		$tokenization_forced = $this->get_gateway()->is_direct_gateway() && $this->get_gateway()->supports_tokenization() && $this->get_gateway()->get_payment_tokens_handler()->tokenization_forced();
 
 		// tokenization always "forced" on the add new payment method page
 		if ( $this->get_gateway()->is_direct_gateway() && $this->get_gateway()->supports_add_payment_method() && is_add_payment_method_page() ) {
@@ -289,7 +289,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 
 		$fields = array(
 			'card-number' => array(
-				'type'              => 'text',
+				'type'              => 'tel',
 				'label'             => esc_html__( 'Card Number', 'woocommerce-plugin-framework' ),
 				'id'                => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-account-number',
 				'name'              => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-account-number',
@@ -298,8 +298,13 @@ class SV_WC_Payment_Gateway_Payment_Form {
 				'class'             => array( 'form-row-wide' ),
 				'input_class'       => array( 'js-sv-wc-payment-gateway-credit-card-form-input js-sv-wc-payment-gateway-credit-card-form-account-number' ),
 				'maxlength'         => 20,
-				'custom_attributes' => array( 'autocomplete' => 'cc-number' ),
-				'value'             => $defaults['account-number'],
+				'custom_attributes' => array(
+					'autocomplete'   => 'cc-number',
+					'autocorrect'    => 'no',
+					'autocapitalize' => 'no',
+					'spellcheck'     => 'no',
+				),
+				'value' => $defaults['account-number'],
 			),
 			'card-expiry' => array(
 				'type'              => 'text',
@@ -310,24 +315,35 @@ class SV_WC_Payment_Gateway_Payment_Form {
 				'required'          => true,
 				'class'             => array( 'form-row-first' ),
 				'input_class'       => array( 'js-sv-wc-payment-gateway-credit-card-form-input js-sv-wc-payment-gateway-credit-card-form-expiry' ),
-				'custom_attributes' => array( 'autocomplete' => 'cc-exp' ),
-				'value'             => $defaults['expiry'],
+				'custom_attributes' => array(
+					'autocomplete'   => 'cc-exp',
+					'autocorrect'    => 'no',
+					'autocapitalize' => 'no',
+					'spellcheck'     => 'no',
+				),
+				'value' => $defaults['expiry'],
 			),
 		);
 
 		if ( $this->get_gateway()->csc_enabled() ) {
-			$fields['card-csc']    = array(
-				'type'              => 'text',
+
+			$fields['card-csc'] = array(
+				'type'              => 'tel',
 				'label'             => esc_html__( 'Card Security Code', 'woocommerce-plugin-framework' ),
 				'id'                => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-csc',
 				'name'              => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-csc',
 				'placeholder'       => esc_html__( 'CSC', 'woocommerce-plugin-framework' ),
-				'required'          => true,
+				'required'          => $this->get_gateway()->csc_required(),
 				'class'             => array( 'form-row-last' ),
 				'input_class'       => array( 'js-sv-wc-payment-gateway-credit-card-form-input js-sv-wc-payment-gateway-credit-card-form-csc' ),
-				'maxlength'         => 20,
-				'custom_attributes' => array( 'autocomplete' => 'off' ),
-				'value'             => $defaults['csc'],
+				'maxlength'         => 4,
+				'custom_attributes' => array(
+					'autocomplete'   => 'off',
+					'autocorrect'    => 'no',
+					'autocapitalize' => 'no',
+					'spellcheck'     => 'no',
+				),
+				'value' => $defaults['csc'],
 			);
 		}
 
@@ -359,7 +375,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 
 		$fields = array(
 			'routing-number' => array(
-				'type'              => 'text',
+				'type'              => 'tel',
 				/* translators: e-check routing number, HTML form field label, https://en.wikipedia.org/wiki/Routing_transit_number */
 				'label'             => esc_html__( 'Routing Number', 'woocommerce-plugin-framework' ) . $check_hint,
 				'id'                => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-routing-number',
@@ -369,11 +385,16 @@ class SV_WC_Payment_Gateway_Payment_Form {
 				'class'             => array( 'form-row-first' ),
 				'input_class'       => array( 'js-sv-wc-payment-gateway-echeck-form-input js-sv-wc-payment-gateway-echeck-form-routing-number' ),
 				'maxlength'         => 9,
-				'custom_attributes' => array( 'autocomplete' => 'off' ),
+				'custom_attributes' => array(
+					'autocomplete'   => 'off',
+					'autocorrect'    => 'no',
+					'autocapitalize' => 'no',
+					'spellcheck'     => 'no',
+				),
 				'value'             => $defaults['routing-number'],
 			),
 			'account-number' => array(
-				'type'              => 'text',
+				'type'              => 'tel',
 				/* translators: e-check account number, HTML form field label */
 				'label'             => esc_html__( 'Account Number', 'woocommerce-plugin-framework' ) . $check_hint,
 				'id'                => 'wc-' . $this->get_gateway()->get_id_dasherized() . '-account-number',
@@ -382,7 +403,12 @@ class SV_WC_Payment_Gateway_Payment_Form {
 				'class'             => array( 'form-row-last' ),
 				'input_class'       => array( 'js-sv-wc-payment-gateway-echeck-form-input js-sv-wc-payment-gateway-echeck-form-account-number' ),
 				'maxlength'         => 17,
-				'custom_attributes' => array( 'autocomplete' => 'off' ),
+				'custom_attributes' => array(
+					'autocomplete'   => 'off',
+					'autocorrect'    => 'no',
+					'autocapitalize' => 'no',
+					'spellcheck'     => 'no',
+				),
 				'value'             => $defaults['account-number'],
 			),
 			'account-type'   => array(
@@ -520,6 +546,12 @@ class SV_WC_Payment_Gateway_Payment_Form {
 	 */
 	protected function get_manage_payment_methods_button_html() {
 
+		if ( SV_WC_Plugin_Compatibility::is_wc_version_lt_2_6() ) {
+			$url = wc_get_page_permalink( 'myaccount' ) . '#wc-' . $this->get_gateway()->get_plugin()->get_id_dasherized() . '-my-payment-methods';
+		} else {
+			$url = wc_get_endpoint_url( 'payment-methods', '', wc_get_page_permalink( 'myaccount' ) );
+		}
+
 		/**
 		 * Payment Form Manage Payment Methods Button Text Filter.
 		 *
@@ -530,7 +562,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 		 * @param string $button_text button text
 		 */
 		$html = sprintf( '<a class="button" style="float:right;" href="%s">%s</a>',
-			esc_url( wc_get_page_permalink( 'myaccount' ) . '#wc-' . $this->get_gateway()->get_plugin()->get_id_dasherized() . '-my-payment-methods' ),
+			esc_url( $url ),
 			/* translators: Payment method as in a specific credit card, eCheck or bank account */
 			wp_kses_post( apply_filters( 'wc_' . $this->get_gateway()->get_id() . '_manage_payment_methods_text', esc_html__( 'Manage Payment Methods', 'woocommerce-plugin-framework' ) ) )
 		);
@@ -911,6 +943,18 @@ class SV_WC_Payment_Gateway_Payment_Form {
 	 */
 	public function render_js() {
 
+		$args = array(
+			'plugin_id'     => $this->get_gateway()->get_plugin()->get_id(),
+			'id'            => $this->get_gateway()->get_id(),
+			'id_dasherized' => $this->get_gateway()->get_id_dasherized(),
+			'type'          => $this->get_gateway()->get_payment_type(),
+			'csc_required'  => $this->get_gateway()->csc_required(),
+		);
+
+		if ( $this->get_gateway()->supports_card_types() ) {
+			$args['enabled_card_types'] = array_map( array( 'SV_WC_Payment_Gateway_Helper', 'normalize_card_type' ), $this->get_gateway()->get_card_types() );
+		}
+
 		/**
 		 * Payment Gateway Payment Form JS Arguments Filter.
 		 *
@@ -926,13 +970,7 @@ class SV_WC_Payment_Gateway_Payment_Form {
 		 * }
 		 * @param \SV_WC_Payment_Gateway_Payment_Form $this payment form instance
 		 */
-		$args = apply_filters( 'wc_' . $this->get_gateway()->get_id() . '_payment_form_js_args', array(
-			'plugin_id'     => $this->get_gateway()->get_plugin()->get_id(),
-			'id'            => $this->get_gateway()->get_id(),
-			'id_dasherized' => $this->get_gateway()->get_id_dasherized(),
-			'type'          => $this->get_gateway()->get_payment_type(),
-			'csc_required'  => $this->get_gateway()->csc_enabled(),
-		), $this );
+		$args = apply_filters( 'wc_' . $this->get_gateway()->get_id() . '_payment_form_js_args', $args, $this );
 
 		wc_enqueue_js( sprintf( 'window.wc_%s_payment_form_handler = new SV_WC_Payment_Form_Handler( %s );', esc_js( $this->get_gateway()->get_id() ), json_encode( $args ) ) );
 	}
